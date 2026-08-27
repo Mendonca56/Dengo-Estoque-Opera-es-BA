@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dengo — Logística BI v12 · CD Armazém Bahia</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F1F5F9;--sf:#fff;--bd:#E2E8F0;--bd2:#F1F5F9;
+  --sb:#0F172A;--sb2:#1E293B;
+  --t1:#0F172A;--t2:#475569;--t3:#94A3B8;
+  --gold:#BA7517;--gbg:#FEF3C7;--gb:#FDE68A;
+  --green:#059669;--grbg:#ECFDF5;--grb:#A7F3D0;
+  --red:#DC2626;--rbg:#FEF2F2;--rbd:#FECACA;
+  --blue:#5F5E5A;--bbg:#F1EFE8;--bbd:#D3D1C7;
+  --amber:#BA7517;--abg:#FAEEDA;--abd:#FAC775;
+  --purple:#8A5510;--pbg:#FAEEDA;--pbd:#FAC775;
+  --slate:#64748B;--slag:#F8FAFC;
+  --rad:10px;--rsm:6px
+}
+body,html{font-family:'Inter',system-ui,sans-serif;color:var(--t1);background:var(--bg);font-size:13px;height:100%}
+.app{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:198px;background:var(--sb);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-brand{padding:16px 14px 12px;border-bottom:1px solid var(--sb2)}
+.sb-logo{display:flex;align-items:center;gap:9px}
+.sb-ico{width:32px;height:32px;background:#BA7517;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sb-name{font-size:13px;font-weight:600;color:#F8FAFC}.sb-sub{font-size:9px;color:#64748B;margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+.sb-sec{padding:9px 10px 3px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:#334155}
+.ni{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--rsm);cursor:pointer;font-size:11.5px;font-weight:500;color:#64748B;width:100%;text-align:left;border:none;background:transparent;transition:all .15s;margin:1px 0;font-family:inherit}
+.ni i{font-size:14px;flex-shrink:0}
+.ni:hover{background:var(--sb2);color:#CBD5E1;padding-left:13px}
+.ni.on{background:#BA7517;color:#fff}.ni.on i{color:#FEF3C7}
+.sb-sep{height:1px;background:var(--sb2);margin:8px 10px}
+.sb-body{padding:0 7px}
+.sb-inf{padding:12px 10px}
+.si-title{font-size:9px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:0 4px}
+.si-row{display:flex;align-items:center;gap:9px;padding:7px 8px;margin-bottom:2px;border-radius:6px;transition:background .15s ease}
+.si-row:hover{background:rgba(255,255,255,.03)}
+.si-icon{width:22px;height:22px;border-radius:5px;background:var(--sb2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:#94A3B8}
+.si-body{flex:1;min-width:0}
+.si-lbl{font-size:9px;color:#64748B;font-weight:500;text-transform:uppercase;letter-spacing:.05em;line-height:1.2;margin-bottom:2px}
+.si-val{font-size:12.5px;font-weight:600;line-height:1.1;color:#CBD5E1;font-variant-numeric:tabular-nums}
+.sb-foot{padding:12px 12px 10px;border-top:1px solid var(--sb2);margin-top:auto}
+.sf-txt{font-size:9px;color:#334155;text-align:center;line-height:1.6}
+/* MAIN */
+.main{flex:1;background:var(--bg);overflow-y:auto}
+.sec{display:none;padding:18px}.sec.vis{display:block}
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.st{font-size:19px;font-weight:600;color:var(--t1);letter-spacing:-.02em}
+.sd{font-size:12px;color:var(--t2);margin-top:3px}
+.sb2r{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;transition:transform .15s ease}
+.badge:hover{transform:scale(1.06)}
+.bg{background:var(--gbg);color:var(--gold);border:1px solid var(--gb)}
+.bgr{background:var(--grbg);color:var(--green);border:1px solid var(--grb)}
+.br{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.bb{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+.bgy{background:var(--slag);color:var(--slate);border:1px solid var(--bd)}
+.ba{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.bp{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+/* GRIDS */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:13px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:13px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:13px}
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:14px 16px;position:relative}
+.card.blg{border-left:3px solid #BA7517}.card.blgr{border-left:3px solid var(--green)}
+.card.blr{border-left:3px solid var(--red)}.card.blb{border-left:3px solid var(--blue)}
+.card.blgy{border-left:3px solid #CBD5E1}.card.bla{border-left:3px solid var(--amber)}
+.card.blp{border-left:3px solid var(--purple)}
+.ci{position:absolute;top:13px;right:14px;font-size:20px;color:var(--bd)}
+.cl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:5px}
+.cv{font-size:24px;font-weight:500;color:var(--t1);line-height:1;margin-bottom:4px}
+.cd{font-size:11px;color:var(--t3);line-height:1.4}
+.cy{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;margin-top:6px}
+.yup{background:var(--rbg);color:var(--red)}.ydn{background:var(--grbg);color:var(--green)}
+.yw{background:var(--gbg);color:var(--gold)}.yeq{background:var(--slag);color:var(--slate)}
+.yp{background:var(--pbg);color:var(--purple)}.yb{background:var(--bbg);color:var(--blue)}
+/* CC BOX */
+.cc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:14px 16px;margin-bottom:13px}
+.cch{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:5px}
+.cct{font-size:13px;font-weight:600;color:var(--t1)}
+.ccs{font-size:11px;color:var(--t2);margin-bottom:10px}
+.leg{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.li{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)}
+.ld{width:10px;height:10px;border-radius:2px}
+.ldash{width:14px;height:0;border-top:2px dashed;flex-shrink:0}
+.cw{position:relative}.cw.h180{height:180px}.cw.h200{height:200px}.cw.h220{height:220px}.cw.h240{height:240px}.cw.h260{height:260px}.cw.h280{height:280px}
+/* PIPELINE */
+.pipe{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr 22px 1fr;margin-bottom:13px;overflow:hidden}
+.pi{padding:14px;text-align:center;transition:background .18s ease,transform .18s ease}
+.pi:hover{background:rgba(180,83,9,.04);transform:scale(1.015)}
+.pa{display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:13px;background:var(--bd2)}
+.pl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:5px}
+.pv{font-size:17px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.pd{font-size:10px;color:var(--t3)}
+.pgd{color:var(--green)}.pwn{color:var(--gold)}.pbl{color:var(--blue)}
+/* ALERTS */
+.alert{border-radius:var(--rad);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;border:1px solid;margin-bottom:13px}
+.alert.red{background:var(--rbg);border-color:var(--rbd)}.alert.gold{background:var(--gbg);border-color:var(--gb)}
+.alert.green{background:var(--grbg);border-color:var(--grb)}.alert.blue{background:var(--bbg);border-color:var(--bbd)}
+.alert.purple{background:var(--pbg);border-color:var(--pbd)}.alert.amber{background:var(--abg);border-color:var(--abd)}
+.alert.red .ai,.alert.red .at{color:var(--red)}.alert.gold .ai,.alert.gold .at{color:var(--gold)}
+.alert.green .ai,.alert.green .at{color:var(--green)}.alert.blue .ai,.alert.blue .at{color:var(--blue)}
+.alert.purple .ai,.alert.purple .at{color:var(--purple)}.alert.amber .ai,.alert.amber .at{color:var(--amber)}
+.ai{font-size:16px;flex-shrink:0;margin-top:1px}
+.at{font-size:12px;font-weight:600;margin-bottom:2px}
+.ad{font-size:11px;color:var(--t2);line-height:1.5}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px}
+/* BENCH */
+.bench{background:linear-gradient(to right,#FFFBEB,#fff);border:1px solid var(--gb);border-radius:var(--rad);padding:13px 15px;margin-bottom:13px}
+.bht{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.bg3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bi{text-align:center}
+.bl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-bottom:4px}
+.bv{font-size:15px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.bs{font-size:10px;color:var(--t3)}
+/* TOP 5 / RANK ROWS */
+.t5{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd2);transition:background .15s ease,padding-left .15s ease;border-radius:5px}
+.t5:last-child{border-bottom:none}
+.t5:hover{background:var(--slag);padding-left:6px}
+.t5rk{font-size:11px;font-weight:700;min-width:18px;text-align:center}
+.t5nm{font-size:11px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t5bg{width:70px;background:var(--bd);border-radius:3px;height:5px;flex-shrink:0}
+.t5bf{height:5px;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.t5vl{font-size:11px;font-weight:700;min-width:68px;text-align:right;font-variant-numeric:tabular-nums}
+/* EFFICIENCY BARS */
+.efr{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd2);transition:background .15s ease,padding-left .15s ease;border-radius:5px}
+.efr:last-child{border-bottom:none}
+.efr:hover{background:var(--slag);padding-left:6px}
+.efnm{font-size:11px;min-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.efbg{flex:1;background:var(--bd);border-radius:3px;height:8px;position:relative}
+.efbf{height:8px;border-radius:3px;position:absolute;left:0;top:0;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.efmk{position:absolute;top:-3px;width:2px;height:14px;background:#DC2626;border-radius:1px;opacity:.8}
+.efpct{font-size:11px;font-weight:700;min-width:38px;text-align:right}
+.efdl{font-size:10px;font-weight:600;min-width:70px;text-align:right}
+/* PANEL VERDE (destaque) */
+.fp{background:var(--grbg);border:1px solid var(--grb);border-radius:var(--rad);padding:14px 16px;margin-bottom:13px}
+.fph{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:7px}
+.fpt{font-size:13px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:7px}
+.fkp{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--grb);border-radius:var(--rsm);overflow:hidden;margin-bottom:11px;background:var(--sf)}
+.fk{padding:10px 11px;text-align:center;border-right:1px solid var(--grb)}
+.fk:last-child{border-right:none}
+.fkl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-bottom:3px}
+.fkv{font-size:15px;font-weight:500;color:var(--t1);margin-bottom:1px}
+.fks{font-size:10px;color:var(--t3)}
+.fmg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:11px}
+.fm{background:var(--sf);border:1px solid var(--grb);border-radius:var(--rsm);padding:10px 12px}
+.fmn{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-bottom:5px}
+.fmr{font-size:18px;font-weight:500;margin-bottom:2px}
+.fmo{font-size:10px;color:var(--t3);margin-bottom:5px}
+.fmb{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.fmbf{height:4px;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.fms{font-size:10px;font-weight:600;margin-top:4px}
+.fnota{font-size:11.5px;color:var(--t2);line-height:1.65;padding:11px 13px;background:var(--sf);border:1px solid var(--grb);border-radius:var(--rsm)}
+.fnota strong{color:var(--green);font-weight:600}
+/* NOTICE */
+.notice{background:var(--pbg);border:1px solid var(--pbd);border-radius:var(--rad);padding:12px 15px;margin-bottom:13px;display:flex;align-items:flex-start;gap:10px}
+.notice i{color:var(--purple);font-size:16px;flex-shrink:0;margin-top:1px}
+.notice-title{font-size:12px;font-weight:600;color:var(--purple);margin-bottom:3px}
+.notice-desc{font-size:11px;color:var(--t2);line-height:1.5}
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+thead th{padding:8px 9px;text-align:left;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);background:var(--slag);border-bottom:1px solid var(--bd)}
+tbody td{padding:7px 9px;border-bottom:1px solid var(--bd2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--slag)}
+.tr{text-align:right;font-variant-numeric:tabular-nums}
+.pt{height:5px;background:var(--bd);border-radius:3px;overflow:hidden;min-width:48px}
+.pf{height:5px;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.tbg{display:inline-flex;align-items:center;padding:2px 6px;border-radius:7px;font-size:9.5px;font-weight:600}
+th.sortable{cursor:pointer;user-select:none;position:relative;transition:color .15s ease,background .15s ease}
+th.sortable:hover{color:var(--gold);background:var(--gbg)}
+th.sortable::after{content:'⇅';font-size:9px;opacity:.4;margin-left:4px}
+th.sortable.asc::after{content:'↑';opacity:1;color:var(--gold)}
+th.sortable.desc::after{content:'↓';opacity:1;color:var(--gold)}
+/* CHIPS (filtro dinâmico) */
+.mv-chips{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 12px}
+.mv-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--bd);background:#fff;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s ease;font-family:inherit;letter-spacing:.02em}
+.mv-chip:hover:not(:disabled){border-color:#BA7517;color:#BA7517;background:#FAEEDA}
+.mv-chip.on{background:#BA7517;border-color:#BA7517;color:#fff;box-shadow:0 2px 8px rgba(186,117,23,.22)}
+.mv-chip:disabled{opacity:.4;cursor:not-allowed;background:var(--slag);color:var(--t3)}
+.mv-chip .mv-chip-sub{font-size:8.5px;font-weight:500;opacity:.75;margin-left:4px;text-transform:uppercase;letter-spacing:.05em}
+.mv-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;flex-wrap:wrap;gap:8px}
+.mv-selected{font-size:12px;color:var(--t2);font-weight:500;display:flex;align-items:center;gap:6px}
+.mv-selected strong{color:var(--gold);font-weight:700;font-size:14px}
+.mv-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.mv-kpi{background:#fff;border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:var(--rad);padding:12px 14px;transition:transform .18s ease,box-shadow .18s ease}
+.mv-kpi:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.06)}
+.mv-kpi.green{border-left-color:var(--green)}
+.mv-kpi.blue{border-left-color:var(--blue)}
+.mv-kpi.red{border-left-color:var(--red)}
+.mv-kpi.amber{border-left-color:var(--amber)}
+.mv-kpi.purple{border-left-color:var(--purple)}
+.mv-kpi-lbl{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:4px}
+.mv-kpi-val{font-size:22px;font-weight:500;color:var(--t1);line-height:1;font-variant-numeric:tabular-nums;margin-bottom:3px}
+.mv-kpi-sub{font-size:10px;color:var(--t3);line-height:1.4}
+/* ── cabeçalho: linha de meta-informação ── */
+.sh-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sh-div{width:1px;height:15px;background:var(--bd);flex-shrink:0}
+.upd{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--t2);cursor:help;white-space:nowrap}
+.upd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--green)}
+.upd-txt b{color:var(--t1);font-weight:600}
+.upd.ok .upd-dot{background:var(--green)}
+.upd.hoje .upd-dot{background:#BA7517;box-shadow:0 0 0 3px rgba(186,117,23,.16)}
+.upd.hoje .upd-txt{color:#8A5510;font-weight:500}
+.upd.atraso .upd-dot{background:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.14)}
+.upd.atraso .upd-txt{color:var(--red);font-weight:600}
+.upd.atraso .upd-txt b{color:var(--red)}
+/* ── alternador de visualização ── */
+.hero-switch{display:flex;gap:3px;flex-shrink:0}
+.hsw{padding:4px 11px;border-radius:16px;border:1px solid var(--bd);background:transparent;cursor:pointer;
+     font-size:10.5px;font-weight:600;color:var(--t3);font-family:inherit;transition:all .15s;white-space:nowrap}
+.hsw:hover{border-color:#BA7517;color:#BA7517}
+.hsw.on{background:#BA7517;border-color:#BA7517;color:#fff}
+@media(max-width:900px){.sh-div{display:none}.sh-meta{gap:8px}}
+/* ── HERO CLEAN ── */
+.hero-lite{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:22px 24px;margin-bottom:13px;
+  transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s cubic-bezier(.4,0,.2,1)}
+.hero-lite:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(28,28,26,.06)}
+.hl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid var(--bd2);margin-bottom:16px}
+.hl-num{flex-shrink:0}
+.hl-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--t2);margin-bottom:8px}
+.hl-val{font-size:42px;font-weight:600;line-height:1;letter-spacing:-.02em;color:#8A5510;font-variant-numeric:tabular-nums}
+.hl-val span{font-size:15px;font-weight:400;color:var(--t3)}
+.hl-sub{font-size:11.5px;color:var(--t3);margin-top:7px}
+.hl-bar{flex:1;min-width:290px;padding-top:8px;cursor:help}
+.hl-seg{display:flex;height:28px;border-radius:5px;overflow:hidden;margin-bottom:8px}
+.hls{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#F1EFE8;transition:filter .18s ease}
+.hls:hover{filter:brightness(1.1)}
+.hl-legs{display:flex;font-size:10px;color:var(--t3)}
+.hl-legs>div{text-align:center;padding:0 3px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hl-legs b{color:var(--t1);font-weight:600}
+.hl-foot{display:grid;grid-template-columns:repeat(4,1fr)}
+.hlf{padding:0 18px;border-right:1px solid var(--bd2);cursor:help}
+.hlf:first-child{padding-left:0}
+.hlf:last-child{border-right:none;padding-right:0}
+.hlf-l{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-bottom:6px}
+.hlf-v{font-size:21px;font-weight:600;line-height:1;color:var(--t1);font-variant-numeric:tabular-nums}
+.hlf-v span{font-size:11px;font-weight:400;color:var(--t3)}
+.hlf-s{font-size:10px;color:var(--t3);margin-top:4px}
+@media(max-width:1100px){.hl-foot{grid-template-columns:repeat(2,1fr);gap:14px 0}
+  .hlf:nth-child(2){border-right:none;padding-right:0}.hlf:nth-child(3){padding-left:0}
+  .hl-legs{display:none}}
+/* HERO — bloco único · paleta grafite + âmbar */
+.hero{background:#1C1C1A;border-radius:var(--rad);padding:20px 24px 0;color:#F1EFE8;margin-bottom:13px}
+.hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.hero-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:#B4B2A9;margin-bottom:7px}
+.hero-val{font-size:40px;font-weight:600;line-height:1;letter-spacing:-.02em;color:#F1EFE8;font-variant-numeric:tabular-nums}
+.hero-un{font-size:15px;font-weight:400;color:#B4B2A9}
+.hero-stats{display:flex;gap:24px;text-align:right}
+.hst-l{font-size:10px;color:#888780;margin-bottom:3px}
+.hst-v{font-size:15px;font-weight:600;color:#F1EFE8;font-variant-numeric:tabular-nums}
+/* barra segmentada */
+.hero-seg{display:flex;height:28px;border-radius:5px;overflow:hidden;margin-bottom:9px;cursor:help}
+.hsg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#F1EFE8;transition:filter .18s ease}
+.hsg:hover{filter:brightness(1.14)}
+.hero-legs{display:flex;margin-bottom:20px}
+.hlg-i{text-align:center;padding:0 4px;min-width:0}
+.hlg-n{font-size:10.5px;font-weight:600;color:#B4B2A9;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hlg-v{font-size:13px;font-weight:600;color:#F1EFE8;font-variant-numeric:tabular-nums}
+.hlg-s{font-size:9.5px;color:#6B6A65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* rodapé de KPIs dentro do card */
+.hero-foot{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.09);margin:0 -24px;padding:0 24px}
+.hf{padding:15px 18px 17px;border-right:1px solid rgba(255,255,255,.07);transition:background .18s ease;cursor:help}
+.hf:first-child{padding-left:0}
+.hf:last-child{border-right:none;padding-right:0}
+.hf:hover{background:rgba(255,255,255,.028)}
+.hf-l{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#888780;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.hf-l i{font-size:13px;color:#BA7517}
+.hf-v{font-size:20px;font-weight:600;line-height:1;color:#F1EFE8;font-variant-numeric:tabular-nums}
+.hf-v span{font-size:11px;font-weight:400;color:#888780}
+.hf-s{font-size:10px;color:#6B6A65;margin-top:4px}
+.curva-note{font-size:11px;color:var(--t2);line-height:1.6;padding:10px 13px;background:var(--slag);border:1px solid var(--bd);border-radius:var(--rsm);margin-top:11px}
+.curva-note strong{color:#BA7517;font-weight:600}
+@media(max-width:1100px){
+  .hero-foot{grid-template-columns:repeat(2,1fr)}
+  .hf:nth-child(2){border-right:none;padding-right:0}
+  .hf:nth-child(3){padding-left:0;border-top:1px solid rgba(255,255,255,.07)}
+  .hf:nth-child(4){border-top:1px solid rgba(255,255,255,.07)}
+  .hero-stats{gap:16px}
+  .hlg-s{display:none}
+}
+/* ═══ MODO APRESENTAÇÃO EXECUTIVO ═══ */
+#pres{display:none;position:fixed;inset:0;z-index:9000;background:#141412;color:#F8FAFC;flex-direction:column}
+#pres.on{display:flex}
+.pr-top{display:flex;align-items:center;justify-content:space-between;padding:14px 30px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.pr-brand{display:flex;align-items:center;gap:10px}
+.pr-ico{width:30px;height:30px;background:#BA7517;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.pr-bn{font-size:13px;font-weight:600}.pr-bs{font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:.08em}
+.pr-nav{display:flex;gap:5px}
+.pr-nb{padding:5px 13px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#94A3B8;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.pr-nb:hover{border-color:#BA7517;color:#FAC775}
+.pr-nb.on{background:#BA7517;border-color:#BA7517;color:#fff}
+.pr-x{background:transparent;border:none;color:#64748B;font-size:20px;cursor:pointer;padding:4px 8px;transition:color .15s}
+.pr-x:hover{color:#F87171}
+.pr-body{flex:1;overflow-y:auto;padding:26px 40px}
+.pr-slide{display:none;animation:fadeInUp .4s cubic-bezier(.4,0,.2,1)}
+.pr-slide.on{display:block}
+.pr-h{font-size:26px;font-weight:600;letter-spacing:-.02em;margin-bottom:5px}
+.pr-sub{font-size:13px;color:#94A3B8;margin-bottom:22px}
+.pr-kg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.pr-k{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 20px;transition:transform .2s ease,background .2s ease}
+.pr-k:hover{transform:translateY(-3px);background:rgba(255,255,255,.06)}
+.pr-kl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#64748B;margin-bottom:9px}
+.pr-kv{font-size:32px;font-weight:600;line-height:1;margin-bottom:5px;letter-spacing:-.02em}
+.pr-kv span{font-size:15px;font-weight:400;color:#64748B}
+.pr-ks{font-size:11px;color:#94A3B8}
+.pr-cw{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 22px;margin-bottom:16px}
+.pr-ct{font-size:14px;font-weight:600;margin-bottom:3px}
+.pr-cs{font-size:11px;color:#64748B;margin-bottom:14px}
+.pr-ch{position:relative;height:290px}
+.pr-ch.sm{height:230px}
+.pr-g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pr-msg{background:rgba(186,117,23,.10);border:1px solid rgba(186,117,23,.28);border-radius:12px;padding:18px 22px;display:flex;gap:14px;align-items:flex-start}
+.pr-msg i{font-size:22px;color:#EF9F27;flex-shrink:0;margin-top:2px}
+.pr-mt{font-size:13px;font-weight:600;margin-bottom:5px;color:#EF9F27}
+.pr-md{font-size:12.5px;color:#CBD5E1;line-height:1.65}
+.pr-md strong{color:#F8FAFC;font-weight:600}
+.pr-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.pr-row:last-child{border-bottom:none}
+.pr-rn{font-size:12.5px;flex:1;color:#E2E8F0}
+.pr-rb{width:130px;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;flex-shrink:0}
+.pr-rf{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.pr-rv{font-size:12.5px;font-weight:600;min-width:92px;text-align:right;font-variant-numeric:tabular-nums}
+.pr-foot{padding:11px 30px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;font-size:10.5px;color:#475569;flex-shrink:0}
+.pr-dots{display:flex;gap:6px}
+.pr-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .2s}
+.pr-dot.on{background:#BA7517;width:20px;border-radius:4px}
+.pres-btn{width:100%;padding:9px;border-radius:var(--rsm);border:1px solid #BA7517;background:rgba(186,117,23,.16);color:#FAC775;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.pres-btn:hover{background:#BA7517;color:#fff}
+@media(max-width:1100px){.pr-kg{grid-template-columns:repeat(2,1fr)}.pr-g2{grid-template-columns:1fr}.pr-body{padding:20px}}
+/* SCORE PANEL (gauge + kpis) */
+.scp{display:grid;grid-template-columns:196px 1fr;gap:11px;margin-bottom:13px}
+.scg{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:var(--rad);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scg-cv{position:relative;width:124px;height:124px}
+.scg-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scg-num{font-size:34px;font-weight:600;color:#F8FAFC;line-height:1}
+.scg-den{font-size:11px;color:#64748B;margin-top:-1px}
+.scg-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-top:11px}
+.scg-st{font-size:11.5px;font-weight:600;color:#34D399;margin-top:3px}
+.sck{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.ski{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:11px 13px;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
+.ski:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.06)}
+.ski::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.ski.kg::after{background:var(--green)}.ski.ka::after{background:var(--amber)}.ski.kr::after{background:var(--red)}
+.skt{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.skn{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2)}
+.ski-ico{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.ski.kg .ski-ico{background:var(--grbg);color:var(--green)}
+.ski.ka .ski-ico{background:var(--abg);color:var(--amber)}
+.ski.kr .ski-ico{background:var(--rbg);color:var(--red)}
+.skv{font-size:20px;font-weight:600;line-height:1;margin-bottom:3px}
+.ski.kg .skv{color:var(--green)}.ski.ka .skv{color:var(--amber)}.ski.kr .skv{color:var(--red)}
+.skm{display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--t3)}
+.sktr{display:inline-flex;align-items:center;gap:2px;font-weight:600;padding:1px 6px;border-radius:8px}
+.sktr.up{background:var(--grbg);color:var(--green)}
+.sktr.dn{background:var(--rbg);color:var(--red)}
+.sktr.eq{background:var(--slag);color:var(--slate)}
+/* HIGHLIGHTS */
+.hlg{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:13px}
+.hl{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;transition:transform .18s ease,box-shadow .18s ease}
+.hl:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.06)}
+.hl-ico{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.hl.pos{border-left:3px solid var(--green)}.hl.pos .hl-ico{background:var(--grbg);color:var(--green)}
+.hl.foc{border-left:3px solid var(--blue)}.hl.foc .hl-ico{background:var(--bbg);color:var(--blue)}
+.hl-t{font-size:11.5px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.hl-d{font-size:10px;color:var(--t2);line-height:1.4}
+/* TRANSIT SUMMARY */
+.trs{display:grid;grid-template-columns:190px 1fr;gap:16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:15px 17px;margin-bottom:13px}
+.trs-tot{border-right:1px solid var(--bd);padding-right:16px}
+.trs-l{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:6px}
+.trs-v{font-size:28px;font-weight:600;color:var(--green);line-height:1;margin-bottom:4px}
+.trs-s{font-size:10px;color:var(--t3)}
+.trs-sp{display:flex;flex-direction:column;justify-content:center;gap:13px}
+.trs-bar{height:8px;background:var(--bd);border-radius:5px;overflow:hidden;margin-bottom:6px}
+.trs-fill{height:100%;border-radius:5px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.trs-inf{display:flex;align-items:center;justify-content:space-between}
+.trs-n{font-size:11.5px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:7px}
+.trs-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.trs-kg{font-size:11px;color:var(--t2);font-weight:500}
+/* LOTS */
+.lots-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px}
+.lotc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);overflow:hidden}
+.loth{padding:11px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--bd2)}
+.loti{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.loti.b{background:#FAEEDA;color:#BA7517}.loti.g{background:#F1EFE8;color:#5F5E5A}
+.lotn{font-size:12px;font-weight:600}.lots{font-size:10px;color:var(--t3)}
+.lotb{padding:11px 14px;max-height:240px;overflow-y:auto}
+.lotr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd2);font-size:11px}
+.lotr:last-child{border-bottom:none}
+.lotr:hover{background:var(--slag)}
+.lot-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1)}
+.lot-mt{display:flex;gap:10px;align-items:center;flex-shrink:0}
+.lot-kg{font-weight:600;font-variant-numeric:tabular-nums}
+.lot-ci{font-size:9.5px;color:var(--t3);font-family:monospace}
+.srch{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:8px 12px;margin-bottom:11px}
+.srch i{color:var(--t3);font-size:14px}
+.srch input{border:none;outline:none;flex:1;font-size:11.5px;font-family:inherit;color:var(--t1);background:transparent}
+/* SLIDERS */
+.slw{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rad);padding:15px;margin-bottom:13px}
+.slr{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.slr:last-child{margin-bottom:0}
+.sll{font-size:11.5px;color:var(--t2);width:210px;flex-shrink:0}
+.slv{font-size:12.5px;font-weight:600;color:var(--t1);width:105px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+input[type=range]{flex:1;accent-color:#BA7517;cursor:pointer}
+.rupt{border-radius:var(--rad);padding:13px 18px;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid}
+.rupt.r{background:var(--rbg);border-color:var(--rbd)}.rupt.g{background:var(--grbg);border-color:var(--grb)}.rupt.a{background:var(--gbg);border-color:var(--gb)}
+.rupt-st{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.rupt.r .rupt-st{color:var(--red)}.rupt.g .rupt-st{color:var(--green)}.rupt.a .rupt-st{color:var(--amber)}
+.rupt-dt{font-size:24px;font-weight:500;color:var(--t1);margin-bottom:3px}
+.rupt-ds{font-size:11px;color:var(--t2)}
+.rupt-rt{text-align:right}
+.rupt-rl{font-size:10px;color:var(--t3);margin-bottom:3px}
+.rupt-rv{font-size:19px;font-weight:500;color:var(--t1)}
+/* TOOLTIPS */
+[data-tip]{position:relative;cursor:help}
+[data-tip]::before,[data-tip]::after{position:absolute;opacity:0;pointer-events:none;transition:opacity .2s cubic-bezier(.4,0,.2,1),transform .2s cubic-bezier(.4,0,.2,1);z-index:9999}
+[data-tip]::before{content:'';bottom:calc(100% + 2px);left:50%;transform:translateX(-50%) translateY(4px);border:5px solid transparent;border-top-color:#0F172A}
+[data-tip]::after{content:attr(data-tip);bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:#0F172A;color:#F8FAFC;padding:8px 12px;border-radius:6px;font-size:11px;font-weight:500;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.18);max-width:280px;width:max-content;text-align:center;white-space:pre-line}
+[data-tip]:hover::before,[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+[data-tip-pos="bottom"]::before{bottom:auto;top:calc(100% + 2px);border-top-color:transparent;border-bottom-color:#0F172A}
+[data-tip-pos="bottom"]::after{bottom:auto;top:calc(100% + 8px)}
+/* HOVER LIFT */
+.card,.cc,.bench,.fp,.slw{transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s cubic-bezier(.4,0,.2,1),border-color .2s ease}
+.card:hover,.cc:hover,.bench:hover,.fp:hover,.slw:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04)}
+.card:hover{z-index:2}
+.card.blg:hover,.card.blgr:hover,.card.blr:hover,.card.blb:hover,.card.blp:hover,.card.bla:hover,.card.blgy:hover{border-left-width:5px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sec.vis>*{animation:fadeInUp .35s cubic-bezier(.4,0,.2,1) backwards}
+.sec.vis>*:nth-child(1){animation-delay:0s}.sec.vis>*:nth-child(2){animation-delay:.04s}
+.sec.vis>*:nth-child(3){animation-delay:.08s}.sec.vis>*:nth-child(4){animation-delay:.12s}
+.sec.vis>*:nth-child(5){animation-delay:.16s}.sec.vis>*:nth-child(n+6){animation-delay:.2s}
+@media(max-width:1100px){.g4,.mv-kpi-grid{grid-template-columns:repeat(2,1fr)}.sck{grid-template-columns:repeat(2,1fr)}.scp{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}.pa{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-brand"><div class="sb-logo"><div class="sb-ico"><i class="ti ti-leaf" style="color:#FEF3C7"></i></div><div><div class="sb-name">Dengo</div><div class="sb-sub">Logística BI · v12</div></div></div></div>
+  <div class="sb-sec">Módulos</div>
+  <div class="sb-body">
+    <button class="ni on" onclick="goto('vg',this)"><i class="ti ti-chart-bar"></i> Visão Geral</button>
+    <button class="ni" onclick="goto('fr',this)"><i class="ti ti-truck"></i> Eficiência de Frete</button>
+    <button class="ni" onclick="goto('est',this)"><i class="ti ti-building-warehouse"></i> Estoque & Hubs</button>
+    <button class="ni" onclick="goto('ab',this)"><i class="ti ti-truck-delivery"></i> Abastecimento</button>
+    <button class="ni" onclick="goto('vend',this)"><i class="ti ti-shopping-cart"></i> Geral Vendas</button>
+  </div>
+  <div class="sb-sep"></div>
+  <div class="sb-sec">Insights avançados</div>
+  <div class="sb-body">
+    <button class="ni" onclick="goto('vg',this);navScroll('s-curva')"><i class="ti ti-calendar-due"></i> Cronograma de vencimento</button>
+    <button class="ni" onclick="goto('vg',this);navScroll('s-saude')"><i class="ti ti-heartbeat"></i> Saudabilidade</button>
+    <button class="ni" onclick="goto('est',this);navScroll('s-trans')"><i class="ti ti-route"></i> Trânsito por Hub</button>
+    <button class="ni" onclick="goto('ab',this);navScroll('s-consumo')"><i class="ti ti-gauge"></i> Consumo médio</button>
+    <button class="ni" onclick="goto('tco',this)"><i class="ti ti-calculator"></i> TCO & Financeiro</button>
+    <button class="ni" onclick="goto('proj',this)"><i class="ti ti-calendar-check"></i> Projetor de Ruptura</button>
+  </div>
+  <div class="sb-sep"></div>
+  <div class="sb-inf">
+    <div class="si-title">Status 2026</div>
+    <div class="si-row"><div class="si-icon"><i class="ti ti-calendar-check"></i></div><div class="si-body"><div class="si-lbl">Realizado</div><div class="si-val">Jan–Jul 2026</div></div></div>
+    <div class="si-row"><div class="si-icon"><i class="ti ti-box"></i></div><div class="si-body"><div class="si-lbl">Estoque atual</div><div class="si-val">108.545 kg</div></div></div>
+    <div class="si-row"><div class="si-icon"><i class="ti ti-cash"></i></div><div class="si-body"><div class="si-lbl">Valor em estoque</div><div class="si-val">R$ 3,82 Mi</div></div></div>
+    <div class="si-row"><div class="si-icon"><i class="ti ti-clock"></i></div><div class="si-body"><div class="si-lbl">Idade média</div><div class="si-val">158 dias</div></div></div>
+  </div>
+  <div class="sb-foot">
+    <button class="pres-btn" onclick="presOpen()"><i class="ti ti-presentation"></i> Modo Apresentação</button>
+    <div class="sf-txt" style="margin-top:9px">CD Armazém Bahia<br>Agosto 2026</div>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- ======================================================
+     VISÃO GERAL
+====================================================== -->
+<div class="sec vis" id="sec-vg">
+  <div class="sh">
+    <div><div class="st">Estoque de Cacau — Visão Executiva</div><div class="sd">CD Armazém Bahia · Ilhéus/Itabuna · posição em 21/08/2026 · valor, vencimentos e saudabilidade do estoque</div></div>
+    <div class="sh-meta">
+      <div class="upd" id="upd-box" data-tip="Cadência de atualização: segunda, quarta e sexta">
+        <span class="upd-dot" id="upd-dot"></span>
+        <span class="upd-txt" id="upd-txt">—</span>
+      </div>
+      <span class="sh-div"></span>
+      <span class="badge bgr" id="bg-venc">—</span>
+      <span class="badge bgy" id="bg-hubs">—</span>
+      <span class="sh-div"></span>
+      <div class="hero-switch">
+        <button class="hsw on" onclick="heroMode('dark',this)">Destaque</button>
+        <button class="hsw" onclick="heroMode('lite',this)">Clean</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO KPIs -->
+  <div class="hero" id="hero-dark">
+    <div class="hero-top">
+      <div>
+        <div class="hero-lbl">Valor imobilizado em estoque</div>
+        <div class="hero-val" id="hd-val">—</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hst"><div class="hst-l">Volume</div><div class="hst-v" id="hd-kg">—</div></div>
+        <div class="hst"><div class="hst-l">Lotes</div><div class="hst-v" id="hd-lot">—</div></div>
+        <div class="hst"><div class="hst-l">R$/kg</div><div class="hst-v" id="hd-pre">—</div></div>
+      </div>
+    </div>
+    <div class="hero-seg" id="hd-seg" data-tip="Regra: endereço TRÂNSITO = ainda no hub de origem&#10;Qualquer outro endereço = já em Ilhéus&#10;Separação = carga montando para a fábrica"></div>
+    <div class="hero-legs" id="hd-legs"></div>
+    <div class="hero-foot" id="hd-foot"></div>
+  </div>
+
+  <!-- ── VERSÃO CLEAN ── -->
+  <div class="hero-lite" id="hero-lite" style="display:none">
+    <div class="hl-top">
+      <div class="hl-num">
+        <div class="hl-lbl">Valor imobilizado em estoque</div>
+        <div class="hl-val" id="hl-val">—</div>
+        <div class="hl-sub" id="hl-sub">—</div>
+      </div>
+      <div class="hl-bar" data-tip="Regra: endereço TRÂNSITO = ainda no hub de origem&#10;Qualquer outro endereço = já em Ilhéus&#10;Separação = carga montando para a fábrica">
+        <div class="hl-seg" id="hl-seg"></div>
+        <div class="hl-legs" id="hl-legs"></div>
+      </div>
+    </div>
+    <div class="hl-foot" id="hl-foot"></div>
+  </div>
+
+  <!-- CRONOGRAMA DE VENCIMENTOS -->
+  <div class="cc" id="s-curva">
+    <div class="cch">
+      <div><div class="cct">Cronograma de vencimentos — o que vence e quando</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px" id="curva-sub">Barras = quanto vence no mês · linha = saldo de estoque projetado se não houver reposição</div></div>
+      <div style="display:flex;gap:5px">
+        <button class="mv-chip on" onclick="curvaMode('kg',this)">Volume (kg)</button>
+        <button class="mv-chip" onclick="curvaMode('vl',this)">Valor (R$)</button>
+      </div>
+    </div>
+    <div class="cw h280"><canvas id="ch-curva"></canvas></div>
+    <div class="curva-note" id="curva-note"></div>
+  </div>
+
+  <!-- SAUDABILIDADE -->
+  <div class="cc" id="s-saude">
+    <div class="cch">
+      <div><div class="cct"><i class="ti ti-heartbeat" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Saudabilidade do estoque — faixas de vencimento</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px" id="saude-sub">Total R$ 3.815.893 em 7 faixas ativas · nenhum lote vencido na base atual</div></div>
+      <div style="display:flex;gap:5px">
+        <button class="mv-chip on" onclick="saudeMode('vl',this)">R$ estoque</button>
+        <button class="mv-chip" onclick="saudeMode('kg',this)">kg cacau</button>
+      </div>
+    </div>
+    <div class="leg"><div class="li"><div class="ld" style="background:#1C1C1A;border-radius:50%"></div>% acumulado (Pareto)</div><div class="li"><div class="ld" style="background:#BA7517"></div><span id="saude-leg">R$ estoque</span></div></div>
+    <div class="cw h280"><canvas id="ch-saude"></canvas></div>
+  </div>
+
+  <div class="g3" id="saude-cards"></div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0">
+      <div class="cct"><i class="ti ti-list-numbers" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Fila FEFO — consumir primeiro</div>
+      <div class="ccs">Os 10 lotes com vencimento mais próximo</div>
+      <div id="fefo-list"></div>
+    </div>
+    <div class="cc" style="margin-bottom:0">
+      <div class="cct"><i class="ti ti-users" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Concentração de fornecedores</div>
+      <div class="ccs" id="prod-sub">Participação dos maiores produtores no estoque</div>
+      <div id="prod-list"></div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUIÇÃO POR HUB -->
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0">
+      <div class="cct">Onde o cacau está agora</div><div class="ccs">Localização física — depósito de Ilhéus vs hubs de origem</div>
+      <div class="cw h220"><canvas id="ch-vghub"></canvas></div>
+    </div>
+    <div class="cc" style="margin-bottom:0">
+      <div class="cct">Origem da compra</div><div class="ccs">Núcleo de recebimento — de onde cada lote veio (dimensão fixa)</div>
+      <div class="cw h220"><canvas id="ch-vgorigem"></canvas></div>
+    </div>
+  </div>
+
+  <div class="alert purple">
+    <i class="ti ti-map-pin ai"></i>
+    <div><div class="at">Origem da compra — Bahia e Pará</div><div class="ad">São <strong>duas dimensões diferentes</strong>. A localização física vem da coluna <em>endereço</em>: só o valor TRÂNSITO indica que o lote ainda está no hub de origem — qualquer outro endereço significa que já foi movimentado para Ilhéus. A origem da compra vem do <em>núcleo de recebimento</em>, que nunca muda e registra de onde o lote veio. Por isso 22,7% do estoque tem origem Travessão, mas apenas 6,2% ainda está fisicamente lá.</div></div>
+  </div>
+
+  <div class="alert blue">
+    <i class="ti ti-info-circle ai"></i>
+    <div><div class="at">Como ler a saudabilidade</div><div class="ad">A curva de Pareto mostra o acumulado de valor por faixa de vencimento. Faixas à esquerda são as mais urgentes: o cacau nelas precisa ser consumido primeiro (FEFO). Hoje <strong>95,8% do valor</strong> está em faixas acima de 120 dias e <strong>não há nenhum lote vencido</strong> na base. O lote mais próximo do vencimento tem 100 dias de prazo. A janela de atenção são os 4.167 kg (R$ 161 mil) que vencem entre 90 e 120 dias.</div></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     EFICIÊNCIA DE FRETE
+====================================================== -->
+<div class="sec" id="sec-fr">
+  <div class="sh">
+    <div><div class="st" id="fr-st">Eficiência de Frete — 2026</div><div class="sd">Custo por tonelada comprada · meta de referência R$ 386/t (média 2024)</div></div>
+    <div class="sb2r"><span class="badge bg" id="fr-badge">2026 parcial</span></div>
+  </div>
+
+  <div class="cc">
+    <div class="mv-hd">
+      <div><div class="cct"><i class="ti ti-filter" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Filtro dinâmico — ano e mês</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">Meses sem compra registrada ficam desabilitados</div></div>
+      <div class="mv-selected">Exibindo: <strong id="fr-sel">Ano todo 2026</strong></div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:9px" id="fr-years"></div>
+    <div class="mv-chips" id="fr-months"></div>
+  </div>
+
+  <div class="g4" id="fr-kpis"></div>
+
+  <div class="bench">
+    <div class="bht"><i class="ti ti-chart-bar"></i> Benchmarking de mercado</div>
+    <div class="bg3">
+      <div class="bi" data-tip="Média histórica Dengo em 2024&#10;Ano de referência com melhor eficiência&#10;R$128.535 de frete / 332.585 kg"><div class="bl">Média Dengo 2024</div><div class="bv">R$ 386/t</div><div class="bs">meta de referência</div></div>
+      <div class="bi" data-tip="Índice de Frete Rodoviário&#10;Publicado pela Frete.com&#10;Referência para carga agrícola"><div class="bl">IFP Frete.com Q4/25</div><div class="bv">R$ 422/t·km</div><div class="bs">mercado agro</div></div>
+      <div class="bi" data-tip="Variação do custo de frete agrícola&#10;Comparativo Q4 2025 vs Q4 2024&#10;Pressão inflacionária do setor"><div class="bl">Alta frete agro 2025</div><div class="bv">+19%</div><div class="bs">Q4 2025 vs Q4 2024</div></div>
+    </div>
+  </div>
+
+  <div class="cc">
+    <div class="cch"><div class="cct" id="fr-ct">R$/t por mês — 2026</div>
+      <div class="leg"><div class="li"><div class="ld" style="background:#059669"></div>Abaixo da meta</div><div class="li"><div class="ld" style="background:#D97706"></div>Acima</div><div class="li"><div class="ld" style="background:#DC2626"></div>Muito acima</div><div class="li"><div class="ldash" style="border-color:#059669"></div>Meta R$386/t</div></div>
+    </div>
+    <div class="ccs" id="fr-cs">Colunas = custo por tonelada · linha = volume comprado</div>
+    <div class="cw h260"><canvas id="ch-fr"></canvas></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct">Comparativo anual R$/t</div><div class="ccs">Evolução do custo médio por tonelada</div><div class="cw h200"><canvas id="ch-frcmp"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Volume comprado por mês</div><div class="ccs" id="fr-vol-s">Distribuição das compras no ano</div><div class="cw h200"><canvas id="ch-frvol"></canvas></div></div>
+  </div>
+
+  <div class="alert amber">
+    <i class="ti ti-info-circle ai"></i>
+    <div><div class="at">Leitura do indicador</div><div class="ad">Jan/2026 registrou R$2.116/t por conta do frete da rota Pará (competência Dez/25) pago em janeiro — é um efeito de competência, não de eficiência operacional. Excluindo janeiro, a média do período cai para <strong id="fr-exj">R$ 240/t</strong>, abaixo da meta de referência.</div></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     ESTOQUE & HUBS
+====================================================== -->
+<div class="sec" id="sec-est">
+  <div class="sh">
+    <div><div class="st">Estoque por Localização</div><div class="sd">108.545 kg · 217 lotes · R$ 3.815.893 · onde o cacau está fisicamente hoje</div></div>
+    <div class="sb2r"><span class="badge bgr"><i class="ti ti-truck"></i> 17.046 kg em rota</span><span class="badge bb">84,3% em Ilhéus</span></div>
+  </div>
+
+  <div class="cc">
+    <div class="mv-hd">
+      <div><div class="cct"><i class="ti ti-map-pin" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Filtro por localização física</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">Regra: endereço TRÂNSITO = ainda no hub de origem · qualquer outro endereço = já em Ilhéus</div></div>
+      <div class="mv-selected">Local: <strong id="hub-sel">Toda a operação</strong></div>
+    </div>
+    <div class="mv-chips" id="hub-chips"></div>
+    <div class="mv-kpi-grid" id="hub-kpis"></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct" id="hub-dist-t">Distribuição por localização</div><div class="ccs">Volume em kg onde o cacau está fisicamente</div><div class="cw h220"><canvas id="ch-hub"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Situação do estoque</div><div class="ccs">Armazenado · em separação para fábrica · em trânsito</div><div class="cw h220"><canvas id="ch-pos"></canvas></div></div>
+  </div>
+
+  <!-- TRÂNSITO -->
+  <div id="s-trans">
+    <div class="cct" style="margin-bottom:9px"><i class="ti ti-route" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Em trânsito — o que ainda não chegou em Ilhéus</div>
+    <div class="trs">
+      <div class="trs-tot">
+        <div class="trs-l">Total em trânsito</div>
+        <div class="trs-v">17.046 kg</div>
+        <div class="trs-s">33 lotes · 15,7% do estoque · idade média 27 dias</div>
+      </div>
+      <div class="trs-sp">
+        <div>
+          <div class="trs-bar"><div class="trs-fill" style="width:60.5%;background:#BA7517"></div></div>
+          <div class="trs-inf"><span class="trs-n"><span class="trs-dot" style="background:#BA7517"></span>Hub Apuarema</span><span class="trs-kg">10.310 kg · 19 lotes · 60,5%</span></div>
+        </div>
+        <div>
+          <div class="trs-bar"><div class="trs-fill" style="width:39.5%;background:#EF9F27"></div></div>
+          <div class="trs-inf"><span class="trs-n"><span class="trs-dot" style="background:#EF9F27"></span>Hub Travessão</span><span class="trs-kg">6.735 kg · 14 lotes · 39,5%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="srch"><i class="ti ti-search"></i><input type="text" placeholder="Buscar produtor nos lotes em trânsito..." oninput="filterLots(this.value)"></div>
+    <div class="lots-grid">
+      <div class="lotc">
+        <div class="loth"><div class="loti b"><i class="ti ti-truck"></i></div><div><div class="lotn">Hub Apuarema → Ilhéus</div><div class="lots">19 lotes · 10.310 kg · 60,5% do trânsito</div></div></div>
+        <div class="lotb" id="lots-apu"></div>
+      </div>
+      <div class="lotc">
+        <div class="loth"><div class="loti g"><i class="ti ti-truck"></i></div><div><div class="lotn">Hub Travessão → Ilhéus</div><div class="lots">14 lotes · 6.735 kg · 39,5% do trânsito</div></div></div>
+        <div class="lotb" id="lots-trav"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert blue">
+    <i class="ti ti-certificate ai"></i>
+    <div><div class="at">Conformidade EUDR — 24,1% certificado</div><div class="ad">26.144 kg de 108.545 kg constam com EUDR = SIM na base (24,1%). Certificar o estoque antes da entrada em vigor da regulação europeia habilita o canal de exportação. A base foi atualizada e o percentual subiu de 0,5% para 24,1% — restam 82.401 kg a certificar.</div></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     ABASTECIMENTO
+====================================================== -->
+<div class="sec" id="sec-ab">
+  <div class="sh">
+    <div><div class="st" id="ab-st">Abastecimento Fábrica — 2026</div><div class="sd" id="ab-sd">Volume enviado para a fábrica por mês e por tipo de produto</div></div>
+    <div class="sb2r"><span class="badge bgr" id="ab-badge">109.879 kg</span></div>
+  </div>
+
+  <div class="cc">
+    <div class="mv-hd">
+      <div><div class="cct"><i class="ti ti-calendar" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Ano de referência</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">Compare a evolução do abastecimento entre os anos</div></div>
+      <div class="mv-selected">Ano: <strong id="ab-sel">2026</strong></div>
+    </div>
+    <div class="mv-chips" id="ab-years"></div>
+  </div>
+
+  <div class="g4" id="ab-kpis"></div>
+
+  <!-- CONSUMO MÉDIO DA FÁBRICA -->
+  <div class="cc" id="s-consumo">
+    <div class="mv-hd">
+      <div><div class="cct"><i class="ti ti-gauge" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Consumo médio da fábrica</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">Base de cálculo do cronograma de vencimentos e da cobertura de estoque</div></div>
+      <div class="mv-selected">Janela: <strong id="cons-sel">2026 · Jan–Jul</strong></div>
+    </div>
+    <div class="mv-chips" id="cons-chips"></div>
+    <div class="mv-kpi-grid" id="cons-kpis"></div>
+    <div class="conta">
+      <div class="conta-t">Como o número é calculado</div>
+      <div class="conta-f" id="cons-formula"></div>
+      <div class="conta-d">O denominador são os <strong>meses corridos do calendário</strong>, não apenas os meses com remessa. Um mês sem envio não é um mês sem produção — a fábrica segue consumindo o lote recebido no mês anterior. Incluir os gaps no divisor reflete o consumo real e evita superestimar a capacidade de absorção do estoque.</div>
+    </div>
+    <div class="cw h240" style="margin-top:13px"><canvas id="ch-consumo"></canvas></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct" id="ab-ct">Envios mensais — 2026</div><div class="ccs">Volume total enviado por mês</div><div class="cw h220"><canvas id="ch-ab"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Mix por tipo de produto</div><div class="ccs" id="ab-mix-s">Participação de cada família</div><div class="cw h220"><canvas id="ch-abmix"></canvas></div></div>
+  </div>
+
+  <div class="cc">
+    <div class="cch"><div class="cct">Composição mensal por tipo</div>
+      <div class="leg"><div class="li"><div class="ld" style="background:#8A5510"></div>Massa</div><div class="li"><div class="ld" style="background:#EF9F27"></div>Pepita</div><div class="li"><div class="ld" style="background:#5F5E5A"></div>Amazônia</div></div>
+    </div>
+    <div class="ccs">Barras empilhadas por família de produto</div>
+    <div class="cw h240"><canvas id="ch-abstack"></canvas></div>
+  </div>
+
+  <div id="ab-alert"></div>
+</div>
+
+<!-- ======================================================
+     GERAL VENDAS
+====================================================== -->
+<div class="sec" id="sec-vend">
+  <div class="sh">
+    <div><div class="st">Geral Vendas — Recuperação de Cacau Bloqueado</div><div class="sd">Cacau com defeito revendido no mercado secundário · análise por motivo de bloqueio</div></div>
+    <div class="sb2r"><span class="badge bb" id="vend-badge">Todos os motivos</span></div>
+  </div>
+
+  <div class="cc">
+    <div class="mv-hd">
+      <div><div class="cct"><i class="ti ti-filter" style="font-size:14px;vertical-align:-2px;margin-right:4px;color:var(--gold)"></i> Filtros — ano e motivo</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">Selecione o ano de venda e o tipo de defeito para ver volume, valor recuperado e taxa de recuperação</div></div>
+      <div class="mv-selected">Exibindo: <strong id="vend-sel">Todos os anos · Todos</strong></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);min-width:36px">Ano</span>
+      <div class="mv-chips" style="margin:0" id="vend-years"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);min-width:36px">Motivo</span>
+      <div class="mv-chips" style="margin:0" id="vend-chips"></div>
+    </div>
+    <div class="mv-kpi-grid" style="margin-top:14px" id="vend-kpis"></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct">Volume por motivo de bloqueio</div><div class="ccs">Quantidade vendida por tipo de defeito (kg)</div><div class="cw h220"><canvas id="ch-vmot"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Mix de motivos</div><div class="ccs">Participação de cada defeito no total vendido</div><div class="cw h220"><canvas id="ch-vmix"></canvas></div></div>
+  </div>
+
+  <div class="cc">
+    <div class="cch"><div class="cct">Recuperação de valor — venda vs compra</div>
+      <div class="leg"><div class="li"><div class="ld" style="background:#5F5E5A"></div>Valor de compra</div><div class="li"><div class="ld" style="background:#BA7517"></div>Valor de venda</div></div>
+    </div>
+    <div class="ccs">Quanto do custo original foi recuperado em cada motivo</div>
+    <div class="cw h240"><canvas id="ch-vrec"></canvas></div>
+  </div>
+
+  <div class="cc">
+    <div class="cct" style="margin-bottom:9px">Taxa de recuperação por motivo</div>
+    <div id="vend-eff"></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct">Evolução anual de vendas</div><div class="ccs">Volume e valor recuperado por ano</div><div class="cw h200"><canvas id="ch-vano"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Principais compradores</div><div class="ccs" id="vemp-sub">Empresas que adquiriram o cacau recuperado</div><div class="cw h200"><canvas id="ch-vemp"></canvas></div></div>
+  </div>
+
+  <div class="alert green">
+    <i class="ti ti-bulb ai"></i>
+    <div id="vend-insight"></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     TCO & FINANCEIRO
+====================================================== -->
+<div class="sec" id="sec-tco">
+  <div class="sh">
+    <div><div class="st" id="tco-st">TCO — Custo Total do kg · 2026</div><div class="sd">Preço de compra + frete + processamento + custo do capital imobilizado</div></div>
+    <div class="sb2r"><span class="badge bgy">R$/kg entregue à fábrica</span></div>
+  </div>
+
+  <div class="cc">
+    <div class="mv-hd">
+      <div><div class="cct">Ano de análise</div><div style="font-size:11px;color:var(--t2);margin-top:3px">Compare a composição do custo entre os anos</div></div>
+      <div class="mv-selected">Ano: <strong id="tco-sel">2026</strong></div>
+    </div>
+    <div class="mv-chips" id="tco-years"></div>
+  </div>
+
+  <div class="fp">
+    <div class="fph"><div class="fpt"><i class="ti ti-calculator"></i> TCO consolidado</div><div class="badge bgr" id="tco-badge">2026 · Jan–Jul</div></div>
+    <div class="fkp" id="tco-kpis"></div>
+    <div class="fnota" id="tco-nota"></div>
+  </div>
+
+  <div class="g2">
+    <div class="cc" style="margin-bottom:0"><div class="cct" id="tco-ct">Composição do TCO — 2026</div><div class="ccs">Cada componente em R$/kg</div><div class="cw h220"><canvas id="ch-tco"></canvas></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="cct">Comparativo 2024 · 2025 · 2026</div><div class="ccs">Barras empilhadas — TCO total por ano</div><div class="cw h220"><canvas id="ch-tcocmp"></canvas></div></div>
+  </div>
+
+  <div class="notice">
+    <i class="ti ti-info-circle"></i>
+    <div><div class="notice-title">Metodologia de cálculo</div><div class="notice-desc">
+      <strong>Preço de compra:</strong> média ponderada dos lotes em estoque. ·
+      <strong>Frete:</strong> custo total do período ÷ kg comprado. ·
+      <strong>Processamento:</strong> mão de obra + insumos por turno padrão (R$ 0,18/kg). ·
+      <strong>Carregamento:</strong> estoque médio × preço médio × Selic 10,5% ÷ 12 ÷ consumo mensal. Preços 2024–2025 são estimativas de mercado.
+    </div></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     PROJETOR DE RUPTURA
+====================================================== -->
+<div class="sec" id="sec-proj">
+  <div class="sh">
+    <div><div class="st">Projetor de Ruptura de Estoque</div><div class="sd">Simulador de cobertura · horizonte 12 meses · estoque inicial 108.545 kg · R$ 3,82 Mi</div></div>
+    <div class="sb2r"><span class="badge bgy" id="proj-badge">simulação</span></div>
+  </div>
+
+  <div class="rupt g" id="rupt-box">
+    <div><div class="rupt-st" id="rupt-st">Calculando…</div><div class="rupt-dt" id="rupt-dt">—</div><div class="rupt-ds" id="rupt-ds">Ajuste os parâmetros abaixo</div></div>
+    <div class="rupt-rt"><div class="rupt-rl">Estoque ao final de 12 meses</div><div class="rupt-rv" id="rupt-fin">—</div></div>
+  </div>
+
+  <div class="slw">
+    <div class="cct" style="margin-bottom:11px">Parâmetros da simulação</div>
+    <div class="slr"><span class="sll">Consumo mensal (fábrica)</span><input type="range" id="p-cons" min="5000" max="45000" step="500" value="15700" oninput="buildProj()"><span class="slv" id="p-cons-v">15.700 kg</span></div>
+    <div class="slr"><span class="sll">Reposição mensal (compras)</span><input type="range" id="p-rep" min="0" max="40000" step="500" value="10900" oninput="buildProj()"><span class="slv" id="p-rep-v">10.900 kg</span></div>
+    <div class="slr"><span class="sll">Estoque mínimo de segurança</span><input type="range" id="p-safe" min="5000" max="40000" step="1000" value="20000" oninput="buildProj()"><span class="slv" id="p-safe-v">20.000 kg</span></div>
+  </div>
+
+  <div class="cct" style="margin-bottom:9px">Análise de sensibilidade — se a demanda aumentar</div>
+  <div class="g4" id="sens-grid"></div>
+
+  <div class="cc">
+    <div class="cch"><div class="cct">Projeção de estoque — 12 meses</div>
+      <div class="leg"><div class="li"><div class="ld" style="background:#BA7517"></div>Estoque projetado</div><div class="li"><div class="ldash" style="border-color:#DC2626"></div>Mínimo de segurança</div></div>
+    </div>
+    <div class="ccs">Pontos vermelhos indicam meses abaixo do estoque de segurança</div>
+    <div class="cw h260"><canvas id="ch-proj"></canvas></div>
+  </div>
+
+  <div class="alert blue">
+    <i class="ti ti-info-circle ai"></i>
+    <div><div class="at">Valores padrão da simulação</div><div class="ad">Consumo inicial = média mensal real de 2026 (15.700 kg/mês, calculada sobre 7 meses). Reposição inicial = média de compra mensal do período (10.900 kg/mês). Ajuste os controles para simular cenários de aumento de demanda ou redução de compras.</div></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ═══ MODO APRESENTAÇÃO EXECUTIVO ═══ -->
+<div id="pres">
+  <div class="pr-top">
+    <div class="pr-brand"><div class="pr-ico"><i class="ti ti-leaf" style="color:#FEF3C7"></i></div>
+      <div><div class="pr-bn">Dengo · CD Armazém Bahia</div><div class="pr-bs">Apresentação Executiva · Agosto 2026</div></div></div>
+    <div class="pr-nav" id="pr-nav"></div>
+    <button class="pr-x" onclick="presClose()" title="Fechar (Esc)"><i class="ti ti-x"></i></button>
+  </div>
+
+  <div class="pr-body">
+    <!-- S1 — POSIÇÃO -->
+    <div class="pr-slide on" id="prs-0">
+      <div class="pr-h">Posição do Estoque</div>
+      <div class="pr-sub">Snapshot em 12 de agosto de 2026 · CD Armazém Bahia</div>
+      <div class="pr-kg">
+        <div class="pr-k"><div class="pr-kl">Valor imobilizado</div><div class="pr-kv" style="color:#EF9F27">R$ 3,82 <span>Mi</span></div><div class="pr-ks">217 lotes · R$ 35,51/kg médio</div></div>
+        <div class="pr-k"><div class="pr-kl">Volume total</div><div class="pr-kv">108.545 <span>kg</span></div><div class="pr-ks">108,5 toneladas de cacau</div></div>
+        <div class="pr-k"><div class="pr-kl">Ainda nos hubs</div><div class="pr-kv" style="color:#EF9F27">17.046 <span>kg</span></div><div class="pr-ks">33 lotes · 15,7% não chegou</div></div>
+        <div class="pr-k"><div class="pr-kl">Idade média</div><div class="pr-kv">158 <span>dias</span></div><div class="pr-ks">ponderada por volume</div></div>
+      </div>
+      <div class="pr-g2">
+        <div class="pr-cw"><div class="pr-ct">Situação do estoque</div><div class="pr-cs">Armazenado · em separação · em trânsito</div><div class="pr-ch sm"><canvas id="pch-pos"></canvas></div></div>
+        <div class="pr-cw"><div class="pr-ct">Onde o cacau está</div><div class="pr-cs">Localização física — 84,3% já em Ilhéus</div><div class="pr-ch sm"><canvas id="pch-hub"></canvas></div></div>
+      </div>
+      <div class="pr-msg"><i class="ti ti-bulb"></i><div><div class="pr-mt">Leitura executiva</div>
+        <div class="pr-md">O estoque soma <strong>R$ 3,82 milhões</strong> em 108,5 toneladas. <strong>84,3% já está fisicamente no depósito de Ilhéus</strong> (91.499 kg), sendo 16.528 kg em separação para abastecer a fábrica. Os 17.046 kg restantes ainda estão nos hubs de Apuarema e Travessão aguardando transferência — com idade média de apenas 27 dias, contra 182 dias do estoque de Ilhéus.</div></div></div>
+    </div>
+
+    <!-- S2 — SAUDABILIDADE -->
+    <div class="pr-slide" id="prs-1">
+      <div class="pr-h">Saudabilidade do Estoque</div>
+      <div class="pr-sub">Distribuição por faixa de vencimento · nenhum lote vencido</div>
+      <div class="pr-kg">
+        <div class="pr-k"><div class="pr-kl">Lotes vencidos</div><div class="pr-kv" style="color:#34D399">0</div><div class="pr-ks">base 100% saudável</div></div>
+        <div class="pr-k"><div class="pr-kl">Menor prazo</div><div class="pr-kv">100 <span>dias</span></div><div class="pr-ks">vence em 20/11/2026</div></div>
+        <div class="pr-k"><div class="pr-kl">A vencer em 150d</div><div class="pr-kv" style="color:#EF9F27">10.218 <span>kg</span></div><div class="pr-ks">R$ 534 mil · 9,4% do valor</div></div>
+        <div class="pr-k"><div class="pr-kl">Folga acima de 300d</div><div class="pr-kv" style="color:#34D399">42.198 <span>kg</span></div><div class="pr-ks">R$ 1,33 Mi · 34,8% do valor</div></div>
+      </div>
+      <div class="pr-cw"><div class="pr-ct">Faixas de vencimento — valor e Pareto acumulado</div><div class="pr-cs">Barras = R$ em estoque · linha = % acumulado</div><div class="pr-ch"><canvas id="pch-venc"></canvas></div></div>
+      <div class="pr-msg"><i class="ti ti-shield-check"></i><div><div class="pr-mt">Situação confortável</div>
+        <div class="pr-md">Não há lotes vencidos e <strong>nenhum lote na janela crítica de 0 a 90 dias</strong>. A prioridade FEFO recai sobre os <strong>4.167 kg</strong> (R$ 161 mil) que vencem entre 90 e 120 dias — volume plenamente absorvível pelo consumo mensal médio de 15,7 toneladas.</div></div></div>
+    </div>
+
+    <!-- S3 — CURVA -->
+    <div class="pr-slide" id="prs-2">
+      <div class="pr-h">Cronograma de Vencimentos</div>
+      <div class="pr-sub">Quanto vence a cada mês e se o consumo da fábrica absorve</div>
+      <div class="pr-cw"><div class="pr-ct">Vencimentos por mês</div><div class="pr-cs">Barras = vence no mês · linha = saldo de estoque sem reposição</div><div class="pr-ch"><canvas id="pch-curva"></canvas></div></div>
+      <div class="pr-cw"><div class="pr-ct">Valor a vencer por mês</div><div class="pr-cs">Exposição financeira em R$</div><div class="pr-ch sm"><canvas id="pch-preco"></canvas></div></div>
+      <div class="pr-msg"><i class="ti ti-calendar-check"></i><div><div class="pr-mt">Sem risco de perda por validade</div>
+        <div class="pr-md">O teste é conservador: <strong>supõe que nenhuma compra nova entre</strong>. Mesmo assim, o estoque atual dura <strong>6,9 meses</strong> no ritmo de consumo da fábrica (15.697 kg/mês) e se esgota em março de 2027. Todos os lotes com validade a partir daí — inclusive o pico de jul/27 — terão sido consumidos antes de vencer. Nos meses em que ainda há saldo, o volume que vence é sempre menor que o estoque disponível.</div></div></div>
+    </div>
+
+    <!-- S4 — RISCOS -->
+    <div class="pr-slide" id="prs-3">
+      <div class="pr-h">Concentração e Prioridades</div>
+      <div class="pr-sub">Dependência de fornecedores e fila de consumo FEFO</div>
+      <div class="pr-g2">
+        <div class="pr-cw"><div class="pr-ct">Concentração de fornecedores</div><div class="pr-cs">Top 8 de 65 produtores · % do volume em estoque</div><div id="pr-prods"></div></div>
+        <div class="pr-cw"><div class="pr-ct">Fila FEFO — consumir primeiro</div><div class="pr-cs">Lotes com vencimento mais próximo</div><div id="pr-fefo"></div></div>
+      </div>
+      <div class="pr-msg"><i class="ti ti-alert-triangle"></i><div><div class="pr-mt">Ponto de atenção</div>
+        <div class="pr-md">Os <strong>3 maiores produtores concentram 38,9%</strong> do estoque (Luiz Sérgio 15,0%, Agrícola Conduru 13,8%, Luiz Carlos 10,0%). Essa concentração cria dependência de fornecimento — vale avaliar diversificação da base em 2027 para reduzir risco de ruptura por perda de um único fornecedor.</div></div></div>
+    </div>
+  </div>
+
+  <div class="pr-foot">
+    <span>Dengo Chocolates · Logística BI · dados de 21/08/2026</span>
+    <div class="pr-dots" id="pr-dots"></div>
+    <span>← → para navegar · Esc para sair</span>
+  </div>
+</div>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DENGO LOGÍSTICA BI v12
+   Fonte: Inventário_DengoBA (abas ENVIOS FABRICA · INVENTÁRIO · BASE_FRETE · GERAL VENDAS)
+   ═══════════════════════════════════════════════════════════ */
+const MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const META_FR=386;
+const T2='#475569',BD='#E2E8F0';
+const brl=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+const brl2=v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const kg=v=>Math.round(v).toLocaleString('pt-BR')+' kg';
+const C={responsive:true,maintainAspectRatio:false};
+
+
+/* ══════════ PLUGIN DE RÓTULOS DE DADOS ══════════
+   Desenha valores sobre as barras/pontos apenas quando cabem.
+   Regras: pula barras estreitas, pula rótulos que colidiriam com outro
+   já desenhado, e respeita os limites da área do gráfico. */
+const DL={
+  id:'dl',
+  afterDatasetsDraw(chart,args,o){
+    if(!o||o.off)return;
+    const ctx=chart.ctx, area=chart.chartArea, boxes=[];
+    const fmt=o.fmt||(v=>Math.round(v).toLocaleString('pt-BR'));
+    const size=o.size||10, minW=o.minW||26, pad=o.pad||3;
+    ctx.save();
+    ctx.font='600 '+size+'px Inter,system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const fits=(x,y,w,h,al)=>{
+      const cx=al==='left'?x+w/2:al==='right'?x-w/2:x;
+      if(cx-w/2<area.left-2||cx+w/2>area.right+2||y-h/2<area.top-1||y+h/2>area.bottom+1)return false;
+      for(const b of boxes){
+        if(Math.abs(cx-b.x)<(w+b.w)/2+4&&Math.abs(y-b.y)<(h+b.h)/2+2)return false;
+      }
+      return {cx};
+    };
+    chart.data.datasets.forEach((ds,di)=>{
+      if(o.only&&!o.only.includes(di))return;
+      const meta=chart.getDatasetMeta(di);
+      if(meta.hidden)return;
+      const isBar=meta.type==='bar'||(!meta.type&&chart.config.type==='bar');
+      if(o.barsOnly&&!isBar)return;
+      const pts=meta.data||[];
+      pts.forEach((el,i)=>{
+        const raw=ds.data[i];
+        if(raw===null||raw===undefined||raw===0)return;
+        const txt=fmt(raw,i,di);
+        if(!txt)return;
+        const w=ctx.measureText(txt).width, h=size;
+        let x=el.x, y=el.y;
+        if(isBar){
+          const horiz=chart.options.indexAxis==='y';
+          if(horiz){
+            if(el.height!==undefined&&el.height<9)return;
+            ctx.textAlign='left';
+            x=el.x+pad+2; y=el.y;
+            ctx.fillStyle=o.color||'#475569';
+            if(x+w>area.right-2){ ctx.textAlign='right'; x=el.x-pad-2; ctx.fillStyle=o.inColor||'#fff'; }
+          }else{
+            ctx.textAlign='center';
+            if(el.width!==undefined&&el.width<minW)return;
+            const up=(el.base||area.bottom)>=el.y;
+            y=up?el.y-h/2-pad:el.y+h/2+pad;
+            if(up&&y-h/2<area.top){ y=el.y+h/2+pad+2; ctx.fillStyle=o.inColor||'#fff'; }
+            else ctx.fillStyle=o.color||'#475569';
+          }
+        }else{
+          ctx.textAlign='center';
+          if(o.points==='ends'&&i!==0&&i!==pts.length-1)return;
+          y=el.y-h/2-pad-2;
+          ctx.fillStyle=o.lineColor||o.color||'#BA7517';
+        }
+        const ok=fits(x,y,w,h,ctx.textAlign);
+        if(!ok)return;
+        boxes.push({x:ok.cx,y,w,h});
+        ctx.fillText(txt,x,y);
+      });
+    });
+    ctx.restore();
+  }
+};
+if(typeof Chart!=='undefined')Chart.register(DL);
+/* formatadores curtos */
+const fT=v=>v>=1000?(v/1000).toFixed(v>=100000?0:1).replace('.',',')+'t':Math.round(v)+'kg';
+const fK=v=>v>=1e6?'R$'+(v/1e6).toFixed(2).replace('.',',')+'M':'R$'+Math.round(v/1000)+'k';
+const fN=v=>Math.round(v).toLocaleString('pt-BR');
+const fP=v=>v.toFixed(0)+'%';
+
+/*<<<DADOS_INICIO>>>*/
+/* ══ GERADO AUTOMATICAMENTE — 21/08/2026 18:31 ══
+   Origem: Inventário_DengoBA_-_Copia_-_Atualizado_-_Copia.xlsx */
+const AB={2024: {massa: [18610, 18259, 19793, 19230, 18592, 18268, 26837, 19104, 29784, 28759, 20064, 38579], pepita: [1496, 1181, 0, 476, 806, 1200, 1955, 1563, 1650, 1590, 0, 1638], amazonia: [0, 418, 0, 0, 400, 400, 1553, 0, 0, 0, 0, 0]}, 2025: {massa: [0, 20000, 0, 0, 16013, 20061, 19943, 18384, 19988, 18366, 0, 20084], pepita: [0, 0, 0, 0, 4000, 0, 0, 0, 0, 1600, 0, 0], amazonia: [0, 0, 0, 0, 0, 0, 0, 1600, 0, 0, 0, 0]}, 2026: {massa: [18427, 36855, 0, 19636, 10970, 0, 19326, 0, 0, 0, 0, 0], pepita: [0, 3065, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], amazonia: [1600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}};
+const HIST=[151070, 142936, 195448, 292204, 160039, 109878];
+const HLBL=["2021", "2022", "2023", "2024", "2025", "2026*"];
+const FR={"2024": {kg: [29061, 7372, 3816, 8272, 14170, 16058, 12763, 17016, 66773, 55995, 49862, 51427], fr: [6786, 16116, 4538, 2182, 7187, 4863, 5858, 6500, 4152, 20225, 46128, 4000], n: 12}, "2025": {kg: [19066, 11494, 2474, 6852, 5333, 9241, 4426, 11989, 10519, 27829, 30584, 46386], fr: [6218, 9582, 15407, 2500, 6500, 6393, 3250, 5695, 5695, 5695, 5695, 7162], n: 12}, "2026": {kg: [14042, 15357, 4992, 4362, 5466, 13613, 18498, 0, 0, 0, 0, 0], fr: [29718, 5082, 0, 0, 0, 6050, 0, 0, 0, 0, 0, 0], n: 7}};
+const LOCAIS={"all": {"nome": "Toda a operação", "kg": 110821, "lotes": 223, "valor": 3930274, "preco": 35.46, "armaz": 72118, "armazL": 145, "exped": 20998, "expedL": 44, "trans": 17706, "transL": 34, "idade": 160, "cor": "#BA7517"}, "ILHÉUS": {"nome": "Depósito Ilhéus", "kg": 93116, "lotes": 189, "valor": 3333787, "preco": 35.8, "idade": 184, "armaz": 72118, "armazL": 145, "exped": 20998, "expedL": 44, "trans": 0, "transL": 0, "cor": "#5F5E5A"}, "APUAREMA": {"nome": "Hub Apuarema", "kg": 10970, "lotes": 20, "valor": 374121, "preco": 34.1, "idade": 34, "armaz": 0, "armazL": 0, "exped": 0, "expedL": 0, "trans": 10970, "transL": 20, "cor": "#BA7517"}, "TRAVESSÃO": {"nome": "Hub Travessão", "kg": 6735, "lotes": 14, "valor": 222365, "preco": 33.01, "idade": 35, "armaz": 0, "armazL": 0, "exped": 0, "expedL": 0, "trans": 6735, "transL": 14, "cor": "#EF9F27"}};
+const LOCKEYS=["ILHÉUS", "APUAREMA", "TRAVESSÃO"];
+const HUBS=LOCAIS, HUBKEYS=LOCKEYS;
+const ORIGENS=[{"uf": "Ilhéus", "kg": 65014, "lotes": 120, "valor": 2328280, "preco": 35.81, "pct": 58.7, "cor": "#5F5E5A"}, {"uf": "Travessão", "kg": 24597, "lotes": 53, "valor": 866830, "preco": 35.24, "pct": 22.2, "cor": "#EF9F27"}, {"uf": "Apuarema", "kg": 19411, "lotes": 46, "valor": 666775, "preco": 34.35, "pct": 17.5, "cor": "#BA7517"}, {"uf": "Pará", "kg": 1800, "lotes": 4, "valor": 68389, "preco": 38.0, "pct": 1.6, "cor": "#8A5510"}];
+const POSICOES=[{"nome": "Armazenado em Ilhéus", "kg": 72118, "lotes": 145, "valor": 2639821, "idade": 186, "cor": "#5F5E5A", "desc": "em posição de estocagem"}, {"nome": "Em separação", "kg": 20998, "lotes": 44, "valor": 693967, "idade": 178, "cor": "#BA7517", "desc": "montando carga para a fábrica"}, {"nome": "Em trânsito", "kg": 17706, "lotes": 34, "valor": 596486, "idade": 35, "cor": "#EF9F27", "desc": "ainda nos hubs de origem"}];
+const VENCMES={"labels": ["nov/26", "dez/26", "jan/27", "fev/27", "mar/27", "abr/27", "mai/27", "jun/27", "jul/27", "ago/27"], "kg": [4167, 5963, 20601, 25599, 3430, 135, 6166, 3887, 27769, 12328], "vl": [160606, 367577, 780952, 928620, 75451, 2979, 158271, 111838, 895940, 420880], "n": [7, 26, 34, 39, 7, 1, 14, 11, 59, 22]};
+VENCMES.acKg=VENCMES.kg.reduce((a,v)=>{a.push((a[a.length-1]||0)+v);return a;},[]);
+VENCMES.acVl=VENCMES.vl.reduce((a,v)=>{a.push((a[a.length-1]||0)+v);return a;},[]);
+const CONSUMO_MES=15697;
+const ESTOQUE_HOJE=110821;
+VENCMES.saldo=[63730, 48033, 32336, 16639, 942, 0, null, null, null, null];
+const MES_ESGOTA="abr/27";
+const CONSUMO={"2026": {"nome": "2026 · Jan–Jul", "soma": 109879, "n": 7, "media": 15697, "cob": 7.1, "dia": 523, "ativos": 5, "desc": "ano corrente"}, "u12": {"nome": "Últimos 12 meses", "soma": 189901, "n": 12, "media": 15825, "cob": 7.0, "dia": 528, "ativos": 9, "desc": "Ago/25 a Jul/26 · janela móvel"}, "u6": {"nome": "Últimos 6 meses", "soma": 89852, "n": 6, "media": 14975, "cob": 7.4, "dia": 499, "ativos": 4, "desc": "tendência recente"}, "2025": {"nome": "2025 completo", "soma": 160039, "n": 12, "media": 13337, "cob": 8.3, "dia": 445, "ativos": 8, "desc": "ano fechado"}, "2024": {"nome": "2024 completo", "soma": 292205, "n": 12, "media": 24350, "cob": 4.6, "dia": 812, "ativos": 12, "desc": "ano fechado"}};
+const CONSKEYS=["2026", "u12", "u6", "2025", "2024"];
+const CONSERIE={"labels": ["Ago/25", "Set/25", "Out/25", "Nov/25", "Dez/25", "Jan/26", "Fev/26", "Mar/26", "Abr/26", "Mai/26", "Jun/26", "Jul/26"], "envios": [19984, 19988, 19966, 0, 20084, 20027, 39920, 0, 19636, 10970, 0, 19326], "mm3": [19984, 19986, 19979, 13318, 13350, 13370, 26677, 19982, 19852, 10202, 10202, 10099]};
+let consSel="2026";
+const MESES_COBERTURA=(ESTOQUE_HOJE/CONSUMO_MES).toFixed(1);
+const VENC={"labels": ["<0", "0-15", "15-30", "30-45", "45-60", "60-90", "90-120", "120-150", "150-180", "180-240", "240-300", "300-365", ">365"], "kg": [0, 0, 0, 0, 0, 0, 4167, 5963, 20601, 29029, 6301, 43984, 0], "vl": [0, 0, 0, 0, 0, 0, 160606, 367577, 780952, 1004072, 161250, 1428657, 0], "n": [0, 0, 0, 0, 0, 0, 7, 26, 34, 46, 15, 92, 0]};
+VENC.acPct=(()=>{const t=VENC.vl.reduce((a,b)=>a+b,0)||1;let c=0;return VENC.vl.map(v=>{c+=v;return c/t*100;});})();
+const FEFO=[{"p": "Luiz Sérgio de Oliveira Santos", "q": 1680.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Pedro Spinola ", "q": 440.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Luiz Sérgio de Oliveira Santos", "q": 1135.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Luiz Sérgio de Oliveira Santos", "q": 392.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Pedro Spinola ", "q": 280.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Pedro Spinola ", "q": 220.0, "d": 91, "v": "20/11/2026", "h": "Ilhéus"}, {"p": "Meide Fernando Bomfim Santana", "q": 20.0, "d": 91, "v": "20/11/2026", "h": "Travessão"}, {"p": "Romildo Gama de Jesus", "q": 227.5, "d": 121, "v": "20/12/2026", "h": "Travessão"}, {"p": "José Augusto Tourinho Dantas", "q": 460.0, "d": 121, "v": "20/12/2026", "h": "Ilhéus"}, {"p": "José Augusto Tourinho Dantas", "q": 344.0, "d": 121, "v": "20/12/2026", "h": "Ilhéus"}];
+const PRODS=[{"p": "Luiz Sérgio de Oliveira Santos", "kg": 16324, "vl": 575780, "pct": 14.7}, {"p": "Agrícola Conduru", "kg": 15009, "vl": 562840, "pct": 13.5}, {"p": "Luiz Carlos Nascimento de Matos", "kg": 10833, "vl": 383214, "pct": 9.8}, {"p": "Eleonora Kauark Gedeon", "kg": 7332, "vl": 245456, "pct": 6.6}, {"p": "José Augusto Tourinho Dantas", "kg": 6577, "vl": 212019, "pct": 5.9}, {"p": "José Luiz Fagundes", "kg": 5420, "vl": 182693, "pct": 4.9}, {"p": "Adilson José Almeida", "kg": 4200, "vl": 144100, "pct": 3.8}, {"p": "Luiz Henrique Soares Aires", "kg": 3713, "vl": 129381, "pct": 3.4}];
+const N_PRODS=65;
+const LOTES={"apu": [{"p": "Edson Bispo dos Santos", "q": 950.0, "c": "2026-0905"}, {"p": "Humberto Nascimento de Matos", "q": 920.0, "c": "2026-0910"}, {"p": "Nélio Anjos Santos", "q": 760.0, "c": "2026-0924"}, {"p": "João Manoel Araújo Peixoto", "q": 750.0, "c": "2026-0751"}, {"p": "João Manoel Araújo Peixoto", "q": 750.0, "c": "2026-0752"}, {"p": "Maria da Conceição Araújo Peixoto", "q": 750.0, "c": "2026-0759"}, {"p": "Vânia da Silva Profeta", "q": 660.0, "c": "2026-1130"}, {"p": "Joel Correia Nunes", "q": 600.0, "c": "2026-0779"}, {"p": "Adilson José Almeida", "q": 600.0, "c": "2026-0519"}, {"p": "Adilson José Almeida", "q": 600.0, "c": "2026-0773"}, {"p": "João do Carmo Reis Menezes", "q": 510.0, "c": "2026-0888"}, {"p": "Antônio Almeida Correia", "q": 471.0, "c": "2026-0927"}, {"p": "Antônio Anjos dos Santos", "q": 450.0, "c": "2026-0925"}, {"p": "Uberico Santana dos Santos", "q": 345.0, "c": "2026-0926"}, {"p": "Zeildo Anjos Santos", "q": 330.0, "c": "2026-0858"}, {"p": "Tiago Bento da Paixão", "q": 324.3, "c": "2026-1104"}, {"p": "Gean dos Santos Silva", "q": 300.0, "c": "2026-0859"}, {"p": "Gean dos Santos Silva", "q": 300.0, "c": "2026-0891"}, {"p": "Joildo Pereira da Silva", "q": 300.0, "c": "2026-0899"}, {"p": "Antônio Anjos dos Santos", "q": 300.0, "c": "2026-0872"}], "trav": [{"p": "Luiz Carlos Nascimento de Matos", "q": 819.0, "c": "2026-0695"}, {"p": "Adeilton Sanção da Conceição", "q": 806.8, "c": "2026-0732"}, {"p": "Luiz Carlos Nascimento de Matos", "q": 803.3, "c": "2026-0694"}, {"p": "Luiz Carlos Nascimento de Matos", "q": 615.5, "c": "2026-0698"}, {"p": "Luiz Carlos Nascimento de Matos", "q": 605.3, "c": "2026-0696"}, {"p": "Humberto Nascimento de Matos", "q": 602.3, "c": "2026-0731"}, {"p": "Rafael Gama de Souza", "q": 489.9, "c": "2026-0943"}, {"p": "Romildo Gama de Jesus", "q": 420.0, "c": "2026-0871"}, {"p": "Rosana Vitória Santana Silva", "q": 385.0, "c": "2026-0795"}, {"p": "Bela Campina Agropecuária ", "q": 381.0, "c": "2026-0765"}, {"p": "Matusalém Bomfim de Santana", "q": 248.5, "c": "2026-0867"}, {"p": "Rafael Gama de Souza", "q": 230.3, "c": "2026-0793"}, {"p": "Matusalém Bomfim de Santana", "q": 208.5, "c": "2026-0868"}, {"p": "Meide Fernando Bomfim Santana", "q": 120.0, "c": "2026-0865"}]};
+const VCOR={'Bloqueado Sensorial':'#8A5510','Cacau Mofado':'#BA7517','Bloqueado Exportação':'#5F5E5A','Bloqueado Microbiologia':'#FAC775','Bloqueado por RNC':'#44443F','Bloqueado Insetos':'#EF9F27'};
+const VMOTS=["Bloqueado Sensorial", "Cacau Mofado", "Bloqueado Exportação", "Bloqueado Microbiologia", "Bloqueado por RNC", "Bloqueado Insetos"];
+const VDATA={"2021": {"Bloqueado Sensorial": {"kg": 6767, "venda": 99162, "compra": 158279, "n": 93}, "Cacau Mofado": {"kg": 5606, "venda": 73080, "compra": 118343, "n": 126}}, "2022": {"Bloqueado Microbiologia": {"kg": 297, "venda": 4134, "compra": 6841, "n": 3}, "Bloqueado Sensorial": {"kg": 3262, "venda": 45435, "compra": 74975, "n": 39}, "Cacau Mofado": {"kg": 1568, "venda": 21844, "compra": 40854, "n": 28}}, "2024": {"Bloqueado Exportação": {"kg": 5158, "venda": 257359, "compra": 273348, "n": 1}, "Bloqueado Insetos": {"kg": 160, "venda": 7021, "compra": 5349, "n": 2}, "Bloqueado Sensorial": {"kg": 767, "venda": 38263, "compra": 21182, "n": 9}, "Bloqueado por RNC": {"kg": 266, "venda": 11663, "compra": 8886, "n": 10}, "Cacau Mofado": {"kg": 655, "venda": 28750, "compra": 21903, "n": 10}}, "2026": {"Bloqueado Sensorial": {"kg": 1100, "venda": 22803, "compra": 43813, "n": 15}}};
+const VANOS=[2021, 2022, 2024, 2026];
+const VEMP={"all": [{"nome": "BARRY CALLEBAUT BRASIL LTDA", "kg": 10340, "venda": 159039}, {"nome": "S BISPO", "kg": 8260, "venda": 107419}, {"nome": "FABRICIO MUCUGÊ", "kg": 7005, "venda": 343057}], "2021": [{"nome": "S BISPO", "kg": 8260, "venda": 107419}, {"nome": "BARRY CALLEBAUT BRASIL LTDA", "kg": 4113, "venda": 64822}], "2022": [{"nome": "BARRY CALLEBAUT BRASIL LTDA", "kg": 5127, "venda": 71414}], "2024": [{"nome": "FABRICIO MUCUGÊ", "kg": 7005, "venda": 343057}], "2026": [{"nome": "BARRY CALLEBAUT BRASIL LTDA", "kg": 1100, "venda": 22803}]};
+function vAgg(ano,motivo){const anos=ano==='all'?VANOS:[ano];const out={};VMOTS.forEach(m=>{out[m]={kg:0,venda:0,compra:0,n:0};});anos.forEach(y=>{const dd=VDATA[y]||{};Object.keys(dd).forEach(m=>{if(motivo!=='Todos'&&m!==motivo)return;if(!out[m])out[m]={kg:0,venda:0,compra:0,n:0};out[m].kg+=dd[m].kg;out[m].venda+=dd[m].venda;out[m].compra+=dd[m].compra;out[m].n+=dd[m].n;});});return VMOTS.map(m=>({nome:m,cor:VCOR[m]||'#B4B2A9',...out[m]})).filter(m=>m.kg>0);}
+function vSerieAnual(motivo){return VANOS.map(y=>{const dd=VDATA[y]||{};let kg=0,v=0,c=0;Object.keys(dd).forEach(m=>{if(motivo!=='Todos'&&m!==motivo)return;kg+=dd[m].kg;v+=dd[m].venda;c+=dd[m].compra;});return{ano:y,kg:kg,venda:v,compra:c};});}
+const TCO={"2026": {"compra": 35.46, "frete": 0.54, "proc": 0.18, "carry": 2.19, "ks": "2026 · Jan–Jul"}, "2025": {"compra": 35.46, "frete": 0.43, "proc": 0.18, "carry": 2.19, "ks": "2025 completo"}, "2024": {"compra": 35.46, "frete": 0.39, "proc": 0.18, "carry": 2.19, "ks": "2024 completo"}};
+Object.keys(TCO).forEach(y=>{const t=TCO[y];t.total=+(t.compra+t.frete+t.proc+t.carry).toFixed(2);});
+const SC={2026:[{"k": "Frete R$/t", "v": "R$ 535/t", "m": "meta R$ 386/t", "s": "ka", "bar": 72, "i": "ti-truck"}, {"k": "Giro de estoque", "v": "1.70x/ano", "m": "meta 2,5x", "s": "ka", "bar": 68, "i": "ti-rotate-clockwise"}, {"k": "Conformidade EUDR", "v": "24.3%", "m": "meta 100%%", "s": "kr", "bar": 24, "i": "ti-certificate"}, {"k": "Regularidade envio", "v": "71%", "m": "5/7 meses", "s": "ka", "bar": 71, "i": "ti-calendar-check"}, {"k": "Cobertura estoque", "v": "212 dias", "m": "ideal 90–120d", "s": "ka", "bar": 57, "i": "ti-clock"}, {"k": "Custo capital", "v": "R$ 2.19/kg", "m": "minimizar", "s": "ka", "bar": 46, "i": "ti-coin"}]};
+const HL={2026:[{"t": "Estoque de 110.821 kg", "d": "R$ 3.930.274 imobilizados · 223 lotes", "c": "pos", "i": "ti-box"}, {"t": "0 lotes vencidos", "d": "Base saudável — menor prazo 91 dias", "c": "pos", "i": "ti-shield-check"}, {"t": "Consumo 15.697 kg/mês", "d": "Cobertura de 7.1 meses no ritmo atual", "c": "foc", "i": "ti-gauge"}]};
+const ANO_FOCO=2026;
+/*<<<DADOS_FIM>>>*/
+
+/* ── ESTADO ────────────────────────────────────────────── */
+let frYear=2026,frMonth='all',hubSel='all',abYear=2026,tcoYear=2026,vendAno='all',vendMotivo='Todos';
+const CH={};
+function destroy(id){if(CH[id]){CH[id].destroy();delete CH[id];}}
+
+/* ── HELPERS ───────────────────────────────────────────── */
+function abTot(y,m){const a=AB[y];return (a.massa[m]||0)+(a.pepita[m]||0)+(a.amazonia[m]||0);}
+function abYearTot(y){let s=0;for(let i=0;i<12;i++)s+=abTot(y,i);return s;}
+function rptMonth(y,m){const f=FR[y];return f.kg[m]>0?Math.round(f.fr[m]/(f.kg[m]/1000)):0;}
+function frYearTot(y){const f=FR[y];return{kg:f.kg.reduce((a,b)=>a+b,0),fr:f.fr.reduce((a,b)=>a+b,0)};}
+function frRpt(y){const t=frYearTot(y);return t.kg>0?Math.round(t.fr/(t.kg/1000)):0;}
+function barColor(v){return v===0?'#CBD5E1':v<=META_FR?'#059669':v<=META_FR*2?'#D97706':'#DC2626';}
+
+/* ── NAVEGAÇÃO ─────────────────────────────────────────── */
+const BUILT={};
+function goto(sec,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+  document.getElementById('sec-'+sec).classList.add('vis');
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  const build={fr:buildFr,est:buildEst,ab:buildAb,vend:buildVend,tco:buildTco,proj:buildProj};
+  if(build[sec]){if(!BUILT[sec]){BUILT[sec]=1;build[sec]();}else build[sec]();}
+  document.querySelector('.main').scrollTop=0;
+}
+function navScroll(id){setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80);}
+
+/* ═══════════ HERO — preenchido a partir dos dados ═══════════ */
+function buildHero(){
+  const T=LOCAIS.all, P=POSICOES;
+  const tot=T.kg||1;
+  const pct=P.map(p=>p.kg/tot*100);
+  const mi=(T.valor/1e6).toFixed(2).replace('.',',');
+  const nkg=v=>v.toLocaleString('pt-BR');
+
+  /* ── faixa a vencer (primeiras faixas até 150 dias) ── */
+  const iLim=VENC.labels.indexOf('150-180');
+  const cut=iLim>0?iLim:8;
+  const vKg=VENC.kg.slice(0,cut).reduce((a,b)=>a+b,0);
+  const vVl=VENC.vl.slice(0,cut).reduce((a,b)=>a+b,0);
+  const vPct=(vKg/tot*100).toFixed(1).replace('.',',');
+  /* ── maior mês de vencimento ── */
+  const iMax=VENCMES.kg.indexOf(Math.max(...VENCMES.kg));
+  /* ── menor prazo ── */
+  const menor=FEFO.length?FEFO[0].d:0;
+  const vencidos=VENC.n[0]||0;
+  const emIlheus=((LOCAIS['ILHÉUS']?LOCAIS['ILHÉUS'].kg:0)/tot*100).toFixed(1).replace('.',',');
+
+  /* ── VERSÃO DESTAQUE ── */
+  document.getElementById('hd-val').innerHTML='R$ '+mi+' <span class="hero-un">milhões</span>';
+  document.getElementById('hd-kg').textContent=nkg(T.kg)+' kg';
+  document.getElementById('hd-lot').textContent=T.lotes;
+  document.getElementById('hd-pre').textContent=T.preco.toFixed(2).replace('.',',');
+  const corTxt=['#F1EFE8','#FAEEDA','#412402'];
+  document.getElementById('hd-seg').innerHTML=P.map((p,i)=>
+    `<div class="hsg" style="width:${pct[i]}%;background:${p.cor};color:${corTxt[i]}"><span>${pct[i].toFixed(1).replace('.',',')}%</span></div>`).join('');
+  const nomeCurto=['Armazenado em Ilhéus','Em separação','Em trânsito'];
+  const subLeg=['lotes · estocado','lotes · p/ fábrica','lotes · nos hubs'];
+  const corLeg=['#B4B2A9','#FAC775','#EF9F27'];
+  document.getElementById('hd-legs').innerHTML=P.map((p,i)=>
+    `<div class="hlg-i" style="width:${pct[i]}%"><div class="hlg-n" style="color:${corLeg[i]}">${nomeCurto[i]}</div>`+
+    `<div class="hlg-v">${nkg(p.kg)} kg</div><div class="hlg-s">${p.lotes} ${subLeg[i]}</div></div>`).join('');
+  document.getElementById('hd-foot').innerHTML=`
+    <div class="hf" data-tip="Volume total de cacau em estoque&#10;${nkg(LOCAIS['ILHÉUS']?LOCAIS['ILHÉUS'].kg:0)} kg já no depósito de Ilhéus&#10;${nkg(P[2].kg)} kg ainda em trânsito">
+      <div class="hf-l"><i class="ti ti-scale"></i> Volume total</div>
+      <div class="hf-v">${nkg(T.kg)} <span>kg</span></div>
+      <div class="hf-s">${T.lotes} lotes · ${emIlheus}% já em Ilhéus</div></div>
+    <div class="hf" data-tip="Cacau que vence nos próximos 150 dias&#10;${nkg(vKg)} kg · ${brl(vVl)}&#10;Prioridade de consumo FEFO">
+      <div class="hf-l"><i class="ti ti-hourglass"></i> A vencer em 150 dias</div>
+      <div class="hf-v" style="color:#EF9F27">${nkg(vKg)} <span>kg</span></div>
+      <div class="hf-s">${brl(vVl)} · ${vPct}% do estoque</div></div>
+    <div class="hf" data-tip="Maior concentração de vencimentos&#10;${nkg(VENCMES.kg[iMax])} kg · ${VENCMES.n[iMax]} lotes&#10;${brl(VENCMES.vl[iMax])}">
+      <div class="hf-l"><i class="ti ti-calendar-due"></i> Maior vencimento</div>
+      <div class="hf-v">${VENCMES.labels[iMax]}</div>
+      <div class="hf-s">${nkg(VENCMES.kg[iMax])} kg · ${VENCMES.n[iMax]} lotes</div></div>
+    <div class="hf" data-tip="${vencidos?'Há lotes com validade vencida':'Lote mais próximo do vencimento'}&#10;${FEFO.length?'Vence em '+FEFO[0].v:''}">
+      <div class="hf-l"><i class="ti ti-shield-check"></i> Menor prazo de validade</div>
+      <div class="hf-v" style="color:${vencidos?'#F87171':'#6EE7B7'}">${menor} <span>dias</span></div>
+      <div class="hf-s">${vencidos?vencidos+' lote(s) vencido(s)':'zero lotes vencidos'}</div></div>`;
+
+  /* ── VERSÃO CLEAN ── */
+  document.getElementById('hl-val').innerHTML='R$ '+mi+' <span>milhões</span>';
+  document.getElementById('hl-sub').textContent=`${nkg(T.kg)} kg · ${T.lotes} lotes · R$ ${T.preco.toFixed(2).replace('.',',')}/kg médio`;
+  document.getElementById('hl-seg').innerHTML=P.map((p,i)=>
+    `<div class="hls" style="width:${pct[i]}%;background:${p.cor};color:${corTxt[i]}"><span>${pct[i].toFixed(1).replace('.',',')}%</span></div>`).join('');
+  const nomeMini=['Armazenado','Separação','Trânsito'];
+  document.getElementById('hl-legs').innerHTML=P.map((p,i)=>
+    `<div style="width:${pct[i]}%">${nomeMini[i]} <b>${nkg(p.kg)}</b></div>`).join('');
+  document.getElementById('hl-foot').innerHTML=`
+    <div class="hlf" data-tip="Volume total de cacau em estoque"><div class="hlf-l">Volume total</div>
+      <div class="hlf-v">${nkg(T.kg)} <span>kg</span></div><div class="hlf-s">${emIlheus}% já em Ilhéus</div></div>
+    <div class="hlf" data-tip="Cacau que vence nos próximos 150 dias"><div class="hlf-l">A vencer em 150d</div>
+      <div class="hlf-v" style="color:#8A5510">${nkg(vKg)} <span>kg</span></div><div class="hlf-s">${brl(vVl)} · ${vPct}%</div></div>
+    <div class="hlf" data-tip="Mês com maior concentração de vencimentos"><div class="hlf-l">Maior vencimento</div>
+      <div class="hlf-v">${VENCMES.labels[iMax]}</div><div class="hlf-s">${nkg(VENCMES.kg[iMax])} kg · ${VENCMES.n[iMax]} lotes</div></div>
+    <div class="hlf" data-tip="Lote mais próximo do vencimento"><div class="hlf-l">Menor prazo</div>
+      <div class="hlf-v" style="color:${vencidos?'#DC2626':'#0F6E56'}">${menor} <span>dias</span></div>
+      <div class="hlf-s">${vencidos?vencidos+' vencido(s)':'zero vencidos'}</div></div>`;
+
+  /* ── badges do cabeçalho ── */
+  const bV=document.getElementById('bg-venc'), bH=document.getElementById('bg-hubs');
+  if(bV){bV.textContent=vencidos+' lote'+(vencidos===1?'':'s')+' vencido'+(vencidos===1?'':'s');
+         bV.className='badge '+(vencidos?'br':'bgr');}
+  if(bH)bH.textContent=LOCKEYS.length+' Hubs';
+}
+
+/* ═══════════ SELO DE ATUALIZAÇÃO ═══════════
+   Cadência: segunda, quarta e sexta. O status é recalculado
+   toda vez que o painel é aberto, comparando com a data do dia. */
+const DIAS_UPD=[1, 3, 5];              /* 1=seg 3=qua 5=sex */
+const DATA_GERACAO='2026-08-21';     /* preenchido ao gerar o painel */
+const DIAS_SEM=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+function fmtData(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}
+function proximaUpd(base){
+  const d=new Date(base.getTime());
+  for(let i=1;i<=14;i++){
+    d.setDate(d.getDate()+1);
+    if(DIAS_UPD.includes(d.getDay()))return d;
+  }
+  return d;
+}
+function selaUpd(){
+  const box=document.getElementById('upd-box'); if(!box)return;
+  const ger=new Date(DATA_GERACAO+'T12:00:00');
+  const prox=proximaUpd(ger);
+  const hoje=new Date(); hoje.setHours(12,0,0,0);
+  const dg=fmtData(ger).slice(0,5), dp=fmtData(prox).slice(0,5);
+  const dias=Math.round((hoje-prox)/86400000);
+  const txt=document.getElementById('upd-txt');
+  if(dias<0){
+    const f=Math.abs(dias);
+    box.className='upd ok';
+    txt.innerHTML='Atualizado <b>'+dg+'</b> · próxima <b>'+dp+'</b> ('+(f===1?'amanhã':'em '+f+' dias')+')';
+  }else if(dias===0){
+    box.className='upd hoje';
+    txt.innerHTML='Atualizado <b>'+dg+'</b> · <b>atualizar hoje</b>';
+  }else{
+    box.className='upd atraso';
+    txt.innerHTML='Atualizado <b>'+dg+'</b> · atrasado há <b>'+dias+(dias===1?' dia':' dias')+'</b>';
+  }
+}
+selaUpd();
+
+/* ═══════════ ALTERNADOR DE VISUALIZAÇÃO ═══════════ */
+function heroMode(m,b){
+  const dark=m==='dark';
+  document.querySelector('.hero').style.display=dark?'':'none';
+  document.getElementById('hero-lite').style.display=dark?'none':'';
+  document.querySelectorAll('.hsw').forEach(x=>x.classList.remove('on'));
+  if(b)b.classList.add('on');
+  try{localStorage.setItem('dengo_hero',m);}catch(e){}
+}
+(function(){
+  try{
+    const m=localStorage.getItem('dengo_hero');
+    if(m==='lite')setTimeout(()=>{const b=document.querySelectorAll('.hsw')[1];if(b)heroMode('lite',b);},0);
+  }catch(e){}
+})();
+
+/* ═══════════ VISÃO GERAL ═══════════ */
+let curvaM='kg',saudeM='vl';
+
+function buildCurva(){
+  const isVl=curvaM==='vl';
+  const bars=isVl?VENCMES.vl:VENCMES.kg;
+  const fmt=v=>isVl?brl(v):v.toLocaleString('pt-BR')+' kg';
+  const fmtAx=v=>isVl?'R$'+(v/1000).toFixed(0)+'k':(v/1000).toFixed(0)+'t';
+
+  document.getElementById('curva-sub').textContent=isVl
+    ?'Valor que vence a cada mês · exposição financeira por período'
+    :'Barras = quanto vence no mês · linha = saldo de estoque projetado se não houver reposição';
+
+  const ds=[{type:'bar',label:isVl?'Vence no mês (R$)':'Vence no mês (kg)',data:bars,
+     backgroundColor:bars.map((_,i)=>VENCMES.saldo[i]===null||VENCMES.saldo[i]===0?'#D3D1C7':(i<=1?'#EF9F27':'#5F5E5A')),
+     borderRadius:4,order:2,yAxisID:'y'}];
+  if(!isVl)ds.push({type:'line',label:'Saldo projetado (sem reposição)',data:VENCMES.saldo,
+    borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,.08)',borderWidth:2.5,pointRadius:4,
+    pointBackgroundColor:'#BA7517',tension:.2,fill:true,order:1,yAxisID:'y',spanGaps:false});
+
+  destroy('curva');
+  CH.curva=new Chart(document.getElementById('ch-curva'),{data:{labels:VENCMES.labels,datasets:ds},
+    options:{...C,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{font:{size:10},color:T2,boxWidth:10,padding:12}},
+        dl:{barsOnly:true,minW:24,fmt:v=>isVl?fK(v):fT(v)},
+        tooltip:{callbacks:{
+          label:x=>x.raw===null?null:x.dataset.label+': '+fmt(x.raw),
+          afterBody:it=>{const i=it[0].dataIndex,sd=VENCMES.saldo[i];
+            const base=[VENCMES.n[i]+(VENCMES.n[i]===1?' lote':' lotes')+' com validade neste mês'];
+            if(isVl)return base;
+            if(sd===null||sd===0)return base.concat(['—','Estoque já esgotado neste ponto —','estes lotes terão sido consumidos antes']);
+            return base.concat(['—','Saldo em estoque: '+sd.toLocaleString('pt-BR')+' kg',
+              sd>=VENCMES.kg[i]?'✓ saldo maior que o volume que vence':'consumo FEFO retira antes do vencimento']);}}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:fmtAx},grid:{color:BD},
+                 title:{display:true,text:isVl?'R$ vencendo':'kg',color:'#94A3B8',font:{size:9}}},
+        x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+
+  const pico=VENCMES.kg.indexOf(Math.max(...VENCMES.kg));
+  const prox2=VENCMES.kg[0]+VENCMES.kg[1];
+  document.getElementById('curva-note').innerHTML=isVl
+    ?`O maior valor concentrado vence em <strong>${VENCMES.labels[pico]}</strong> (${brl(VENCMES.vl[pico])}). Nos dois primeiros meses vencem ${brl(VENCMES.vl[0]+VENCMES.vl[1])}, equivalente a ${(((VENCMES.vl[0]+VENCMES.vl[1])/VENCMES.acVl[VENCMES.acVl.length-1])*100).toFixed(1)}% do valor total em estoque.`
+    :`<strong>Como ler:</strong> a linha mostra quanto sobraria em estoque se a fábrica seguisse consumindo <strong>${CONSUMO_MES.toLocaleString('pt-BR')} kg/mês</strong> (média de 2026 por mês corrido — detalhe na aba Abastecimento) e <strong>nenhuma compra nova entrasse</strong>. Nesse cenário o estoque atual duraria <strong>${MESES_COBERTURA} meses</strong> e se esgotaria em ${MES_ESGOTA}. As barras cinza-claras (de ${MES_ESGOTA} em diante) são lotes que <strong>não chegam a vencer</strong> — o consumo os retira antes. Nos meses em que ainda há saldo, o volume que vence (${prox2.toLocaleString('pt-BR')} kg nos dois primeiros) é sempre menor que o estoque disponível. Conclusão: <strong>não há risco de perda por validade</strong>, mesmo sem considerar reposição.`;
+}
+function curvaMode(m,b){curvaM=m;document.querySelectorAll('#s-curva .mv-chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');buildCurva();}
+
+function buildSaude(){
+  const isVl=saudeM==='vl';
+  const data=isVl?VENC.vl:VENC.kg;
+  const fmt=v=>isVl?brl(v):v.toLocaleString('pt-BR')+' kg';
+  const fmtAx=v=>isVl?(v/1e6).toFixed(1)+' Mi':(v/1000).toFixed(0)+'t';
+  document.getElementById('saude-leg').textContent=isVl?'R$ estoque':'kg cacau';
+  const totV=VENC.vl.reduce((a,b)=>a+b,0),totK=VENC.kg.reduce((a,b)=>a+b,0);
+  document.getElementById('saude-sub').textContent=isVl
+    ?`Total ${brl(totV)} em 7 faixas ativas · nenhum lote vencido na base atual`
+    :`Total ${totK.toLocaleString('pt-BR')} kg em 7 faixas ativas · nenhum lote vencido`;
+
+  const RAMP=['#7A4A0A','#8A5510','#9A6015','#A96B1A','#BA7517','#C9851C','#D89322','#E3982A','#EF9F27','#F2AC45','#F5BA63','#F8C881','#FAD69F'];
+  const cols=VENC.labels.map((l,i)=>RAMP[i]);
+  destroy('saude');
+  CH.saude=new Chart(document.getElementById('ch-saude'),{
+    data:{labels:VENC.labels,datasets:[
+      {type:'bar',label:isVl?'R$ estoque':'kg cacau',data,backgroundColor:cols,borderRadius:3,order:2,yAxisID:'y'},
+      {type:'line',label:'% acumulado',data:VENC.acPct,borderColor:'#0F172A',borderWidth:2,pointRadius:3.5,pointBackgroundColor:'#0F172A',tension:.25,fill:false,order:1,yAxisID:'y2'}]},
+    options:{...C,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},
+        dl:{minW:30,fmt:(v,i,di)=>di===1?(v>=8?fP(v):''):(isVl?fK(v):fT(v)),color:'#5F5E5A',lineColor:'#1C1C1A'},
+        tooltip:{callbacks:{
+        label:x=>x.dataset.yAxisID==='y2'?'Acumulado: '+x.raw.toFixed(1)+'%':fmt(x.raw),
+        afterBody:it=>{const i=it[0].dataIndex;return VENC.n[i]>0?['—',VENC.n[i]+(VENC.n[i]===1?' lote':' lotes'),(VENC.kg[i]/1000).toFixed(1)+' t · '+brl(VENC.vl[i])]:['sem lotes nesta faixa'];}}}},
+      scales:{y:{position:'left',ticks:{color:T2,font:{size:10},callback:fmtAx},grid:{color:BD}},
+        y2:{position:'right',min:0,max:100,ticks:{color:T2,font:{size:10},callback:v=>v+'%'},grid:{display:false}},
+        x:{ticks:{color:T2,font:{size:9.5}},grid:{display:false},title:{display:true,text:'dias até o vencimento',color:'#94A3B8',font:{size:9.5}}}}}});
+
+  const crit=VENC.kg.slice(0,7).reduce((a,b)=>a+b,0),critV=VENC.vl.slice(0,7).reduce((a,b)=>a+b,0);
+  const med=VENC.kg.slice(7,10).reduce((a,b)=>a+b,0),medV=VENC.vl.slice(7,10).reduce((a,b)=>a+b,0);
+  const folga=VENC.kg.slice(10).reduce((a,b)=>a+b,0),folgaV=VENC.vl.slice(10).reduce((a,b)=>a+b,0);
+  document.getElementById('saude-cards').innerHTML=`
+    <div class="card bla" data-tip="Cacau que vence em até 120 dias&#10;Prioridade máxima de consumo (FEFO)"><i class="ti ti-alert-triangle ci"></i><div class="cl">Prioridade — até 120 dias</div><div class="cv" style="color:var(--amber)">${(crit/1000).toFixed(1)} t</div><div class="cd">${brl(critV)} · ${(critV/totV*100).toFixed(1)}% do valor</div><div class="cy yw">${VENC.n.slice(0,7).reduce((a,b)=>a+b,0)} lotes · consumir primeiro (FEFO)</div></div>
+    <div class="card bla" data-tip="Cacau que vence entre 120 e 300 dias&#10;Janela de programação normal"><i class="ti ti-clock ci"></i><div class="cl">Programar — 120 a 300 dias</div><div class="cv" style="color:var(--amber)">${(med/1000).toFixed(1)} t</div><div class="cd">${brl(medV)} · ${(medV/totV*100).toFixed(1)}% do valor</div><div class="cy yw">${VENC.n.slice(7,10).reduce((a,b)=>a+b,0)} lotes · giro programado</div></div>
+    <div class="card blgr" data-tip="Cacau com mais de 300 dias de validade&#10;Sem risco de perda no horizonte próximo"><i class="ti ti-circle-check ci"></i><div class="cl">Folga — acima de 300 dias</div><div class="cv" style="color:var(--green)">${(folga/1000).toFixed(1)} t</div><div class="cd">${brl(folgaV)} · ${(folgaV/totV*100).toFixed(1)}% do valor</div><div class="cy ydn">${VENC.n.slice(10).reduce((a,b)=>a+b,0)} lotes · sem risco</div></div>`;
+}
+function saudeMode(m,b){saudeM=m;document.querySelectorAll('#s-saude .mv-chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');buildSaude();}
+
+function buildFefo(){
+  const mx=Math.max(...FEFO.map(f=>f.q));
+  document.getElementById('fefo-list').innerHTML=FEFO.map((f,i)=>{
+    const col=f.d<=120?'#BA7517':'#9A6015';
+    return `<div class="t5"><span class="t5rk" style="color:${col}">${i+1}</span>
+      <span class="t5nm">${f.p}<span style="color:var(--t3);font-size:9.5px"> · ${f.h}</span></span>
+      <div class="t5bg"><div class="t5bf" style="width:${f.q/mx*100}%;background:${col}"></div></div>
+      <span class="t5vl">${f.q.toLocaleString('pt-BR',{minimumFractionDigits:0})} kg</span>
+      <span style="font-size:10px;font-weight:600;color:${col};min-width:74px;text-align:right">${f.d}d · ${f.v.slice(0,5)}</span></div>`;
+  }).join('');
+}
+function buildProds(){
+  const tot=HUBS.all.kg;
+  const acum=PRODS.reduce((a,p)=>a+p.pct,0);
+  document.getElementById('prod-sub').textContent=`Top 8 concentram ${acum.toFixed(1)}% do estoque · ${N_PRODS} produtores no total`;
+  const mx=PRODS[0].kg;
+  document.getElementById('prod-list').innerHTML=PRODS.map((p,i)=>{
+    const col=p.pct>=10?'#BA7517':p.pct>=5?'#C9851C':'#888780';
+    return `<div class="t5"><span class="t5rk" style="color:${col}">${i+1}</span>
+      <span class="t5nm">${p.p}</span>
+      <div class="t5bg"><div class="t5bf" style="width:${p.kg/mx*100}%;background:${col}"></div></div>
+      <span class="t5vl">${(p.kg/1000).toFixed(1)} t</span>
+      <span style="font-size:10px;font-weight:700;color:${col};min-width:42px;text-align:right">${p.pct.toFixed(1)}%</span></div>`;
+  }).join('');
+}
+
+function buildVgHub(){
+  destroy('vghub');
+  CH.vghub=new Chart(document.getElementById('ch-vghub'),{type:'doughnut',
+    data:{labels:LOCKEYS.map(k=>`${LOCAIS[k].nome} (${(LOCAIS[k].kg/LOCAIS.all.kg*100).toFixed(1)}%)`),
+      datasets:[{data:LOCKEYS.map(k=>LOCAIS[k].kg),backgroundColor:LOCKEYS.map(k=>LOCAIS[k].cor),borderWidth:2,borderColor:'#fff'}]},
+    options:{...C,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:10},color:T2,padding:8,boxWidth:11}},
+      tooltip:{callbacks:{label:x=>{const h=LOCAIS[LOCKEYS[x.dataIndex]];
+        return[x.raw.toLocaleString('pt-BR')+' kg',brl(h.valor),h.lotes+' lotes · idade '+h.idade+'d'];}}}}}});
+
+  destroy('vgorigem');
+  CH.vgorigem=new Chart(document.getElementById('ch-vgorigem'),{type:'bar',
+    data:{labels:ORIGENS.map(o=>o.uf),datasets:[{data:ORIGENS.map(o=>o.kg),
+      backgroundColor:ORIGENS.map(o=>o.cor),borderRadius:4}]},
+    options:{...C,indexAxis:'y',plugins:{legend:{display:false},dl:{minW:0,pad:6,fmt:fT,color:'#1C1C1A'},
+      tooltip:{callbacks:{label:x=>{const o=ORIGENS[x.dataIndex];
+        return[x.raw.toLocaleString('pt-BR')+' kg ('+o.pct+'%)',brl(o.valor),o.lotes+' lotes · R$ '+o.preco.toFixed(2).replace('.',',')+'/kg'];}}}},
+      scales:{x:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'t'},grid:{color:BD}},
+              y:{ticks:{color:T2,font:{size:11}},grid:{display:false}}}}});
+}
+
+/* ═══════════ MODO APRESENTAÇÃO ═══════════ */
+const PRS=['Posição','Saudabilidade','Vencimentos','Riscos'];
+let prIdx=0,prBuilt=false;
+function presOpen(){
+  document.getElementById('pres').classList.add('on');
+  document.getElementById('pr-nav').innerHTML=PRS.map((t,i)=>`<button class="pr-nb ${i===0?'on':''}" onclick="presGo(${i})">${i+1}. ${t}</button>`).join('');
+  document.getElementById('pr-dots').innerHTML=PRS.map((_,i)=>`<div class="pr-dot ${i===0?'on':''}" onclick="presGo(${i})"></div>`).join('');
+  if(!prBuilt){prBuilt=true;setTimeout(buildPres,90);}
+  presGo(0);
+}
+function presClose(){document.getElementById('pres').classList.remove('on');}
+function presGo(i){
+  if(i<0||i>=PRS.length)return;
+  prIdx=i;
+  document.querySelectorAll('.pr-slide').forEach((s,x)=>s.classList.toggle('on',x===i));
+  document.querySelectorAll('.pr-nb').forEach((b,x)=>b.classList.toggle('on',x===i));
+  document.querySelectorAll('.pr-dot').forEach((d,x)=>d.classList.toggle('on',x===i));
+  document.querySelector('.pr-body').scrollTop=0;
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('pres').classList.contains('on'))return;
+  if(e.key==='Escape')presClose();
+  if(e.key==='ArrowRight')presGo(prIdx+1);
+  if(e.key==='ArrowLeft')presGo(prIdx-1);
+});
+function buildPres(){
+  const GR='rgba(255,255,255,.07)',TX='#94A3B8';
+  const gopt={...C,plugins:{legend:{labels:{font:{size:11},color:TX,boxWidth:11,padding:12}}}};
+
+  new Chart(document.getElementById('pch-pos'),{type:'doughnut',
+    data:{labels:POSICOES.map(p=>p.nome),datasets:[{data:POSICOES.map(p=>p.kg),
+      backgroundColor:POSICOES.map(p=>p.cor),borderWidth:2,borderColor:'#141412'}]},
+    options:{...gopt,cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{size:11},color:TX,padding:10,boxWidth:11}},
+      tooltip:{callbacks:{label:x=>x.label+': '+x.raw.toLocaleString('pt-BR')+' kg'}}}}});
+
+  new Chart(document.getElementById('pch-hub'),{type:'bar',
+    data:{labels:LOCKEYS.map(k=>LOCAIS[k].nome),datasets:[{data:LOCKEYS.map(k=>LOCAIS[k].kg),
+      backgroundColor:LOCKEYS.map(k=>LOCAIS[k].cor),borderRadius:5}]},
+    options:{...gopt,plugins:{legend:{display:false},dl:{minW:26,fmt:fT,color:'#E2E8F0',inColor:'#1C1C1A'},tooltip:{callbacks:{label:x=>{const h=LOCAIS[LOCKEYS[x.dataIndex]];
+      return[x.raw.toLocaleString('pt-BR')+' kg',brl(h.valor),h.lotes+' lotes · '+h.idade+' dias'];}}}},
+      scales:{y:{ticks:{color:TX,font:{size:10},callback:v=>(v/1000).toFixed(0)+'t'},grid:{color:GR}},x:{ticks:{color:TX,font:{size:11}},grid:{display:false}}}}});
+
+  new Chart(document.getElementById('pch-venc'),{
+    data:{labels:VENC.labels,datasets:[
+      {type:'bar',label:'R$ estoque',data:VENC.vl,backgroundColor:VENC.labels.map((_,i)=>['#7A4A0A','#8A5510','#9A6015','#A96B1A','#BA7517','#C9851C','#D89322','#E3982A','#EF9F27','#F2AC45','#F5BA63','#F8C881','#FAD69F'][i]),borderRadius:4,yAxisID:'y',order:2},
+      {type:'line',label:'% acumulado',data:VENC.acPct,borderColor:'#F1EFE8',borderWidth:2,pointRadius:3.5,pointBackgroundColor:'#F1EFE8',tension:.25,yAxisID:'y2',order:1}]},
+    options:{...gopt,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{font:{size:11},color:TX,boxWidth:11,padding:12}},
+        dl:{minW:30,fmt:(v,i,di)=>di===1?(v>=8?fP(v):''):fK(v),color:'#CBD5E1',lineColor:'#F1EFE8'},
+        tooltip:{callbacks:{label:x=>x.dataset.yAxisID==='y2'?'Acumulado: '+x.raw.toFixed(1)+'%':brl(x.raw),
+          afterBody:it=>{const i=it[0].dataIndex;return VENC.n[i]>0?[VENC.n[i]+' lotes · '+(VENC.kg[i]/1000).toFixed(1)+' t']:['sem lotes'];}}}},
+      scales:{y:{ticks:{color:TX,font:{size:10},callback:v=>(v/1e6).toFixed(1)+' Mi'},grid:{color:GR}},
+        y2:{position:'right',min:0,max:100,ticks:{color:TX,font:{size:10},callback:v=>v+'%'},grid:{display:false}},
+        x:{ticks:{color:TX,font:{size:10}},grid:{display:false},title:{display:true,text:'dias até o vencimento',color:'#475569',font:{size:10}}}}}});
+
+  new Chart(document.getElementById('pch-curva'),{
+    data:{labels:VENCMES.labels,datasets:[
+      {type:'bar',label:'Vence no mês',data:VENCMES.kg,backgroundColor:VENCMES.kg.map((_,i)=>VENCMES.saldo[i]===null||VENCMES.saldo[i]===0?'rgba(120,118,112,.45)':(i<=1?'#EF9F27':'rgba(95,94,90,.85)')),borderRadius:4,yAxisID:'y',order:2},
+      {type:'line',label:'Saldo projetado (sem reposição)',data:VENCMES.saldo,borderColor:'#EF9F27',backgroundColor:'rgba(239,159,39,.09)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#EF9F27',tension:.2,fill:true,yAxisID:'y',order:1,spanGaps:false}]},
+    options:{...gopt,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{font:{size:11},color:TX,boxWidth:11,padding:12}},
+        dl:{barsOnly:true,minW:24,fmt:fT,color:'#CBD5E1'},
+        tooltip:{callbacks:{label:x=>x.raw===null?null:x.dataset.label+': '+x.raw.toLocaleString('pt-BR')+' kg',
+          afterBody:it=>{const i=it[0].dataIndex,sd=VENCMES.saldo[i];
+            return sd===null||sd===0?[VENCMES.n[i]+' lotes · estoque já esgotado neste ponto']:[VENCMES.n[i]+' lotes vencendo · saldo '+sd.toLocaleString('pt-BR')+' kg'];}}}},
+      scales:{y:{ticks:{color:TX,font:{size:10},callback:v=>(v/1000).toFixed(0)+'t'},grid:{color:GR}},
+        x:{ticks:{color:TX,font:{size:10}},grid:{display:false}}}}});
+
+  new Chart(document.getElementById('pch-preco'),{type:'bar',
+    data:{labels:VENCMES.labels,datasets:[{data:VENCMES.vl,
+      backgroundColor:VENCMES.vl.map((_,i)=>i<=1?'#EF9F27':'#BA7517'),borderRadius:4}]},
+    options:{...gopt,plugins:{legend:{display:false},dl:{minW:26,fmt:fK,color:'#CBD5E1'},
+      tooltip:{callbacks:{label:x=>brl(x.raw),afterBody:it=>{const i=it[0].dataIndex;return[VENCMES.n[i]+' lotes · '+VENCMES.kg[i].toLocaleString('pt-BR')+' kg'];}}}},
+      scales:{y:{ticks:{color:TX,font:{size:10},callback:v=>'R$'+(v/1000).toFixed(0)+'k'},grid:{color:GR}},
+        x:{ticks:{color:TX,font:{size:10}},grid:{display:false}}}}});
+
+  const mxp=PRODS[0].kg;
+  document.getElementById('pr-prods').innerHTML=PRODS.map(p=>{
+    const c=p.pct>=10?'#EF9F27':p.pct>=5?'#C9851C':'#888780';
+    return `<div class="pr-row"><span class="pr-rn">${p.p}</span>
+      <div class="pr-rb"><div class="pr-rf" style="width:${p.kg/mxp*100}%;background:${c}"></div></div>
+      <span class="pr-rv" style="color:${c}">${p.pct.toFixed(1)}% · ${(p.kg/1000).toFixed(1)}t</span></div>`;}).join('');
+
+  const mxf=Math.max(...FEFO.map(f=>f.q));
+  document.getElementById('pr-fefo').innerHTML=FEFO.slice(0,8).map(f=>{
+    const c=f.d<=120?'#EF9F27':'#BA7517';
+    return `<div class="pr-row"><span class="pr-rn">${f.p}<span style="color:#475569;font-size:10.5px"> · ${f.h}</span></span>
+      <div class="pr-rb"><div class="pr-rf" style="width:${f.q/mxf*100}%;background:${c}"></div></div>
+      <span class="pr-rv" style="color:${c}">${f.d}d · ${f.q.toFixed(0)}kg</span></div>`;}).join('');
+}
+
+/* ═══════════ FRETE ═══════════ */
+function buildFr(){
+  document.getElementById('fr-years').innerHTML=[2024,2025,2026].map(y=>
+    `<button class="mv-chip ${y===frYear?'on':''}" onclick="setFrYear(${y},this)">${y}</button>`).join('');
+  const f=FR[frYear];
+  document.getElementById('fr-months').innerHTML=
+    `<button class="mv-chip ${frMonth==='all'?'on':''}" onclick="setFrMonth('all',this)">Ano todo</button>`+
+    MES.map((m,i)=>`<button class="mv-chip ${frMonth===i?'on':''}" ${f.kg[i]>0?'':'disabled'} onclick="setFrMonth(${i},this)">${m}</button>`).join('');
+  document.getElementById('fr-st').textContent=`Eficiência de Frete — ${frYear}`;
+  document.getElementById('fr-badge').textContent=frYear===2026?'2026 parcial':String(frYear);
+
+  const t=frYearTot(frYear),rAll=frRpt(frYear);
+  const lastIdx=f.kg.reduce((a,v,i)=>v>0?i:a,0);
+  const rv=f.kg.map((_,i)=>i<=lastIdx?rptMonth(frYear,i):null);
+  const valid=rv.map((v,i)=>({v,i})).filter(x=>x.v>0);
+  const best=valid.reduce((a,b)=>b.v<a.v?b:a,valid[0]||{v:0,i:0});
+  const worst=valid.reduce((a,b)=>b.v>a.v?b:a,valid[0]||{v:0,i:0});
+
+  if(frMonth==='all'){
+    document.getElementById('fr-sel').textContent=`Ano todo ${frYear}`;
+    document.getElementById('fr-kpis').innerHTML=`
+      <div class="card blgy" data-tip="Volume total comprado no ano&#10;Fonte: BASE_FRETE"><i class="ti ti-scale ci"></i><div class="cl">Comprado</div><div class="cv">${t.kg.toLocaleString('pt-BR')} kg</div><div class="cd">${frYear===2026?'Jan–Jul 2026 · 7 meses':'ano completo '+frYear}</div></div>
+      <div class="card bla" data-tip="Frete total pago no período"><i class="ti ti-cash ci"></i><div class="cl">Frete total</div><div class="cv" style="color:var(--amber)">${brl(t.fr)}</div><div class="cd">custo logístico do período</div></div>
+      <div class="card ${rAll<=META_FR?'blgr':'blr'}" data-tip="Custo médio por tonelada&#10;Meta de referência: R$386/t"><i class="ti ti-truck ci"></i><div class="cl">Custo por tonelada</div><div class="cv" style="color:${rAll<=META_FR?'var(--green)':'var(--red)'}">R$ ${rAll}/t</div><div class="cd">meta R$ 386/t</div><div class="cy ${rAll<=META_FR?'ydn':'yup'}">${rAll<=META_FR?'✓ na meta':'+'+Math.round((rAll/META_FR-1)*100)+'% vs meta'}</div></div>
+      <div class="card blgr" data-tip="Mês com melhor eficiência de frete"><i class="ti ti-award ci"></i><div class="cl">Melhor mês</div><div class="cv" style="color:var(--green)">${MES[best.i]}</div><div class="cd">R$ ${best.v}/t · ${best.v<=META_FR?'abaixo da meta':'melhor do ano'}</div></div>`;
+    document.getElementById('fr-ct').textContent=`R$/t por mês — ${frYear}`;
+    document.getElementById('fr-cs').textContent='Colunas = custo por tonelada · linha = volume comprado';
+  }else{
+    const i=frMonth,c=f.kg[i],fv=f.fr[i],r=rptMonth(frYear,i);
+    document.getElementById('fr-sel').textContent=`${MES[i]}/${frYear}`;
+    const rc=r===0?'var(--t3)':r<=META_FR?'var(--green)':r<=META_FR*2?'var(--amber)':'var(--red)';
+    document.getElementById('fr-kpis').innerHTML=`
+      <div class="card blb"><i class="ti ti-scale ci"></i><div class="cl">Comprado em ${MES[i]}</div><div class="cv" style="color:var(--blue)">${c.toLocaleString('pt-BR')} kg</div><div class="cd">${MES[i]}/${frYear}</div></div>
+      <div class="card bla"><i class="ti ti-cash ci"></i><div class="cl">Frete pago</div><div class="cv" style="color:var(--amber)">${fv>0?brl(fv):'R$ 0'}</div><div class="cd">${fv>0?'lançado no mês':'sem lançamento'}</div></div>
+      <div class="card ${r===0?'blgy':r<=META_FR?'blgr':'blr'}"><i class="ti ti-truck ci"></i><div class="cl">Custo por tonelada</div><div class="cv" style="color:${rc}">${r>0?'R$ '+r+'/t':'—'}</div><div class="cd">${r===0?'sem frete lançado':r<=META_FR?'✓ abaixo da meta':'acima da meta'}</div></div>
+      <div class="card blgy"><i class="ti ti-chart-bar ci"></i><div class="cl">Peso no ano</div><div class="cv">${t.kg>0?((c/t.kg)*100).toFixed(1):0}%</div><div class="cd">do volume comprado em ${frYear}</div></div>`;
+    document.getElementById('fr-ct').textContent=`Detalhe de ${MES[i]}/${frYear} no contexto do ano`;
+    document.getElementById('fr-cs').textContent='Mês selecionado em destaque';
+  }
+
+  const labels=MES.slice(0,lastIdx+1),data=rv.slice(0,lastIdx+1);
+  const cols=data.map((v,i)=>frMonth!=='all'&&i!==frMonth?'#E2E8F0':barColor(v));
+  destroy('fr');
+  CH.fr=new Chart(document.getElementById('ch-fr'),{type:'bar',
+    data:{labels,datasets:[
+      {type:'bar',label:'R$/t',data,backgroundColor:cols,borderRadius:5,yAxisID:'y',order:3},
+      {type:'line',label:'Meta R$386/t',data:new Array(labels.length).fill(META_FR),borderColor:'#059669',borderWidth:1.5,borderDash:[6,3],pointRadius:0,yAxisID:'y',order:1},
+      {type:'line',label:'Volume (kg)',data:f.kg.slice(0,lastIdx+1),borderColor:'#B4B2A9',backgroundColor:'rgba(180,178,169,.12)',borderWidth:1.5,pointRadius:3,tension:.3,yAxisID:'y2',order:2}
+    ]},
+    options:{...C,plugins:{legend:{display:false},dl:{barsOnly:true,minW:26,fmt:v=>v>0?'R$'+Math.round(v):''},tooltip:{callbacks:{label:x=>
+      x.dataset.label==='Meta R$386/t'?'Meta: R$ 386/t':x.dataset.yAxisID==='y2'?'Volume: '+x.raw.toLocaleString('pt-BR')+' kg':'R$ '+Math.round(x.raw).toLocaleString('pt-BR')+'/t'}}},
+      scales:{y:{position:'left',ticks:{color:T2,font:{size:10},callback:v=>'R$ '+Math.round(v).toLocaleString('pt-BR')},grid:{color:BD}},
+              y2:{position:'right',ticks:{color:'#888780',font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{display:false}},
+              x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+
+  destroy('frcmp');
+  CH.frcmp=new Chart(document.getElementById('ch-frcmp'),{type:'bar',
+    data:{labels:['2024','2025','2026*'],datasets:[
+      {type:'bar',label:'R$/t',data:[frRpt(2024),frRpt(2025),frRpt(2026)],backgroundColor:[2024,2025,2026].map(y=>y===frYear?'#BA7517':'#E2E8F0'),borderRadius:5,order:2},
+      {type:'line',label:'Meta',data:[META_FR,META_FR,META_FR],borderColor:'#059669',borderWidth:1.5,borderDash:[6,3],pointRadius:0,order:1}]},
+    options:{...C,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.dataset.label==='Meta'?'Meta R$386/t':'R$ '+x.raw+'/t'}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>'R$'+v},grid:{color:BD}},x:{ticks:{color:T2,font:{size:11}},grid:{display:false}}}}});
+
+  destroy('frvol');
+  CH.frvol=new Chart(document.getElementById('ch-frvol'),{type:'bar',
+    data:{labels,datasets:[{data:f.kg.slice(0,lastIdx+1),backgroundColor:f.kg.slice(0,lastIdx+1).map((_,i)=>frMonth!=='all'&&i!==frMonth?'#E2E8F0':'#5F5E5A'),borderRadius:4}]},
+    options:{...C,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' kg'}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:BD}},x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+  document.getElementById('fr-vol-s').textContent=`Total ${t.kg.toLocaleString('pt-BR')} kg em ${frYear}`;
+
+  // média ex-janeiro (só 2026)
+  if(frYear===2026){
+    const k=f.kg.slice(1).reduce((a,b)=>a+b,0),fv=f.fr.slice(1).reduce((a,b)=>a+b,0);
+    document.getElementById('fr-exj').textContent='R$ '+Math.round(fv/(k/1000))+'/t';
+  }
+}
+function setFrYear(y,b){frYear=y;frMonth='all';buildFr();}
+function setFrMonth(m,b){if(b.disabled)return;frMonth=m;buildFr();}
+
+/* ═══════════ ESTOQUE & HUBS ═══════════ */
+function buildEst(){
+  document.getElementById('hub-chips').innerHTML=
+    `<button class="mv-chip ${hubSel==='all'?'on':''}" onclick="setHub('all',this)">Toda a operação</button>`+
+    LOCKEYS.map(k=>`<button class="mv-chip ${hubSel===k?'on':''}" onclick="setHub('${k}',this)">${LOCAIS[k].nome}<span class="mv-chip-sub">${(LOCAIS[k].kg/1000).toFixed(1)}t</span></button>`).join('');
+  const h=LOCAIS[hubSel];
+  document.getElementById('hub-sel').textContent=h.nome;
+  const pct=h.kg/LOCAIS.all.kg*100;
+  const emIlheus=hubSel==='ILHÉUS'||hubSel==='all';
+  document.getElementById('hub-kpis').innerHTML=`
+    <div class="mv-kpi" data-tip="Volume neste recorte&#10;Fonte: aba INVENTÁRIO"><div class="mv-kpi-lbl">Volume</div><div class="mv-kpi-val">${h.kg.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${h.lotes} lotes · ${pct.toFixed(1)}% do total</div></div>
+    <div class="mv-kpi blue" data-tip="Valor financeiro do estoque neste recorte"><div class="mv-kpi-lbl">Valor</div><div class="mv-kpi-val">${brl(h.valor)}</div><div class="mv-kpi-sub">R$ ${h.preco.toFixed(2).replace('.',',')}/kg médio</div></div>
+    ${emIlheus?`
+    <div class="mv-kpi green" data-tip="Cacau em posição de estocagem&#10;Endereços internos do armazém"><div class="mv-kpi-lbl">Armazenado</div><div class="mv-kpi-val">${h.armaz.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${h.armazL} lotes estocados</div></div>
+    <div class="mv-kpi amber" data-tip="Carga sendo montada para a fábrica&#10;Ainda disponível em estoque"><div class="mv-kpi-lbl">Em separação</div><div class="mv-kpi-val" style="color:#BA7517">${h.exped.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${h.expedL} lotes p/ fábrica</div></div>`:`
+    <div class="mv-kpi amber" data-tip="Aguardando transferência para Ilhéus"><div class="mv-kpi-lbl">Aguardando transferência</div><div class="mv-kpi-val" style="color:#BA7517">${h.trans.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${h.transL} lotes em rota</div></div>
+    <div class="mv-kpi" data-tip="Tempo desde o recebimento no hub"><div class="mv-kpi-lbl">Idade média</div><div class="mv-kpi-val">${h.idade}<span style="font-size:12px;color:var(--t3)"> dias</span></div><div class="mv-kpi-sub">giro rápido no hub</div></div>`}`;
+
+  document.getElementById('hub-dist-t').textContent=hubSel==='all'?'Distribuição por localização':`${h.nome} — participação no total`;
+  destroy('hub');
+  CH.hub=new Chart(document.getElementById('ch-hub'),{type:'doughnut',
+    data:{labels:LOCKEYS.map(k=>`${LOCAIS[k].nome} (${(LOCAIS[k].kg/LOCAIS.all.kg*100).toFixed(1)}%)`),
+      datasets:[{data:LOCKEYS.map(k=>LOCAIS[k].kg),backgroundColor:LOCKEYS.map(k=>hubSel==='all'||hubSel===k?LOCAIS[k].cor:'#E2E8F0'),borderWidth:2,borderColor:'#fff'}]},
+    options:{...C,plugins:{legend:{position:'bottom',labels:{font:{size:10},color:T2,padding:8,boxWidth:11}},
+      tooltip:{callbacks:{label:x=>{const l=LOCAIS[LOCKEYS[x.dataIndex]];return[x.raw.toLocaleString('pt-BR')+' kg',brl(l.valor),l.lotes+' lotes'];}}}}}});
+
+  destroy('pos');
+  CH.pos=new Chart(document.getElementById('ch-pos'),{type:'bar',
+    data:{labels:POSICOES.map(p=>p.nome),datasets:[{data:POSICOES.map(p=>p.kg),
+      backgroundColor:POSICOES.map(p=>p.cor),borderRadius:4}]},
+    options:{...C,indexAxis:'y',plugins:{legend:{display:false},dl:{minW:0,pad:6,fmt:fT,color:'#1C1C1A'},
+      tooltip:{callbacks:{label:x=>{const p=POSICOES[x.dataIndex];
+        return[x.raw.toLocaleString('pt-BR')+' kg ('+(p.kg/LOCAIS.all.kg*100).toFixed(1)+'%)',brl(p.valor),p.lotes+' lotes · idade '+p.idade+'d',p.desc];}}}},
+      scales:{x:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'t'},grid:{color:BD}},
+              y:{ticks:{color:T2,font:{size:10.5}},grid:{display:false}}}}});
+
+  const row=l=>`<div class="lotr" data-p="${l.p.toLowerCase()}"><span class="lot-nm">${l.p}</span><span class="lot-mt"><span class="lot-kg">${l.q.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})} kg</span><span class="lot-ci">${l.c}</span></span></div>`;
+  document.getElementById('lots-apu').innerHTML=LOTES.apu.map(row).join('');
+  document.getElementById('lots-trav').innerHTML=LOTES.trav.map(row).join('');
+}
+function setHub(k,b){hubSel=k;buildEst();}
+function filterLots(q){
+  q=(q||'').toLowerCase().trim();
+  document.querySelectorAll('.lotr').forEach(r=>{r.style.display=!q||r.dataset.p.includes(q)?'':'none';});
+}
+
+/* ═══════════ ABASTECIMENTO ═══════════ */
+function buildAb(){
+  buildConsumo();
+  document.getElementById('ab-years').innerHTML=[2024,2025,2026].map(y=>
+    `<button class="mv-chip ${y===abYear?'on':''}" onclick="setAbYear(${y},this)">${y}</button>`).join('');
+  const a=AB[abYear],tot=abYearTot(abYear);
+  const m=a.massa.reduce((x,y)=>x+y,0),p=a.pepita.reduce((x,y)=>x+y,0),z=a.amazonia.reduce((x,y)=>x+y,0);
+  const arr=MES.map((_,i)=>abTot(abYear,i));
+  const ativos=arr.filter(v=>v>0).length;
+  const gaps=MES.filter((_,i)=>arr[i]===0&&i<(abYear===2026?7:12));
+  const bi=arr.indexOf(Math.max(...arr));
+  document.getElementById('ab-st').textContent=`Abastecimento Fábrica — ${abYear}`;
+  document.getElementById('ab-sel').textContent=abYear;
+  document.getElementById('ab-badge').textContent=tot.toLocaleString('pt-BR')+' kg';
+
+  const prev=abYear===2026?2025:abYear===2025?2024:null;
+  const yoy=prev?((tot/abYearTot(prev)-1)*100):null;
+  document.getElementById('ab-kpis').innerHTML=`
+    <div class="card blgr" data-tip="Total enviado para a fábrica no ano&#10;Fonte: aba ENVIOS FABRICA"><i class="ti ti-truck-delivery ci"></i><div class="cl">Total abastecido</div><div class="cv" style="color:var(--green)">${tot.toLocaleString('pt-BR')} kg</div><div class="cd">${ativos} ${ativos===1?'mês ativo':'meses ativos'}</div>${yoy!==null?`<div class="cy ${yoy>=0?'ydn':'yup'}">${yoy>=0?'↑ +':'↓ '}${yoy.toFixed(0)}% vs ${prev}</div>`:''}</div>
+    <div class="card blg" data-tip="Mês com maior volume enviado"><i class="ti ti-award ci"></i><div class="cl">Melhor mês</div><div class="cv">${MES[bi]}</div><div class="cd">${arr[bi].toLocaleString('pt-BR')} kg enviados</div></div>
+    <div class="card blb" data-tip="Média mensal considerando apenas meses com envio"><i class="ti ti-chart-bar ci"></i><div class="cl">Média por mês ativo</div><div class="cv" style="color:var(--blue)">${ativos?Math.round(tot/ativos).toLocaleString('pt-BR'):0} kg</div><div class="cd">base ${ativos} ${ativos===1?'mês':'meses'}</div></div>
+    <div class="card bla" data-tip="Participação da família MASSA no mix"><i class="ti ti-percentage ci"></i><div class="cl">Mix Massa</div><div class="cv" style="color:var(--amber)">${(m/tot*100).toFixed(1)}%</div><div class="cd">${m.toLocaleString('pt-BR')} kg de ${tot.toLocaleString('pt-BR')} kg</div></div>`;
+
+  document.getElementById('ab-alert').innerHTML=gaps.length?
+    `<div class="alert amber"><i class="ti ti-calendar-off ai"></i><div><div class="at">Meses sem envio em ${abYear}: ${gaps.join(', ')}</div><div class="ad">Gaps de lançamento ou paradas operacionais. Verifique se houve envio não registrado ou parada programada nesses períodos.</div></div></div>`:
+    `<div class="alert green"><i class="ti ti-circle-check ai"></i><div><div class="at">Abastecimento regular em ${abYear}</div><div class="ad">Todos os meses do período tiveram envio registrado — continuidade operacional sem interrupções.</div></div></div>`;
+
+  document.getElementById('ab-ct').textContent=`Envios mensais — ${abYear}`;
+  destroy('ab');
+  CH.ab=new Chart(document.getElementById('ch-ab'),{type:'bar',
+    data:{labels:MES,datasets:[{data:arr,backgroundColor:arr.map(v=>v===0?'#F1F5F9':'#BA7517'),borderRadius:4}]},
+    options:{...C,plugins:{legend:{display:false},dl:{minW:22,fmt:fT},tooltip:{callbacks:{label:x=>x.raw>0?x.raw.toLocaleString('pt-BR')+' kg':'sem envio'}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:BD}},x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+
+  destroy('abmix');
+  CH.abmix=new Chart(document.getElementById('ch-abmix'),{type:'doughnut',
+    data:{labels:[`Massa (${(m/tot*100).toFixed(1)}%)`,`Pepita (${(p/tot*100).toFixed(1)}%)`,`Amazônia (${(z/tot*100).toFixed(1)}%)`],
+      datasets:[{data:[m,p,z],backgroundColor:['#8A5510','#EF9F27','#5F5E5A'],borderWidth:2,borderColor:'#fff'}]},
+    options:{...C,plugins:{legend:{position:'bottom',labels:{font:{size:10},color:T2,padding:8,boxWidth:11}},
+      tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' kg'}}}}});
+  document.getElementById('ab-mix-s').textContent=`Massa domina com ${(m/tot*100).toFixed(1)}% do volume`;
+
+  destroy('abstack');
+  CH.abstack=new Chart(document.getElementById('ch-abstack'),{type:'bar',
+    data:{labels:MES,datasets:[
+      {label:'Massa',data:a.massa,backgroundColor:'#8A5510',stack:'s',borderRadius:3},
+      {label:'Pepita',data:a.pepita,backgroundColor:'#EF9F27',stack:'s'},
+      {label:'Amazônia',data:a.amazonia,backgroundColor:'#5F5E5A',stack:'s',borderRadius:3}]},
+    options:{...C,plugins:{legend:{display:false},tooltip:{mode:'index',callbacks:{
+      label:x=>x.raw>0?x.dataset.label+': '+x.raw.toLocaleString('pt-BR')+' kg':null,
+      footer:it=>{const s=it.reduce((a,b)=>a+b.raw,0);return s>0?'Total: '+s.toLocaleString('pt-BR')+' kg':'';}}}},
+      scales:{x:{stacked:true,ticks:{color:T2,font:{size:10}},grid:{display:false}},
+              y:{stacked:true,ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:BD}}}}});
+}
+function setAbYear(y,b){abYear=y;buildAb();}
+
+/* ══ CONSUMO MÉDIO ══ */
+function buildConsumo(){
+  document.getElementById('cons-chips').innerHTML=CONSKEYS.map(k=>
+    `<button class="mv-chip ${k===consSel?'on':''}" onclick="setCons('${k}',this)">${CONSUMO[k].nome}</button>`).join('');
+  const c=CONSUMO[consSel];
+  document.getElementById('cons-sel').textContent=c.nome;
+  const cobCls=c.cob>=7?'green':c.cob>=5?'amber':'red';
+  const cobCol=c.cob>=7?'var(--green)':c.cob>=5?'#BA7517':'var(--red)';
+  document.getElementById('cons-kpis').innerHTML=`
+    <div class="mv-kpi" data-tip="Total enviado à fábrica na janela&#10;Fonte: aba ENVIOS FABRICA"><div class="mv-kpi-lbl">Volume enviado</div><div class="mv-kpi-val">${c.soma.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${c.desc}</div></div>
+    <div class="mv-kpi amber" data-tip="Volume total ÷ meses corridos&#10;Base do cronograma de vencimentos"><div class="mv-kpi-lbl">Consumo médio</div><div class="mv-kpi-val" style="color:#BA7517">${c.media.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg/mês</span></div><div class="mv-kpi-sub">${c.n} meses corridos · ${c.ativos} com remessa</div></div>
+    <div class="mv-kpi" data-tip="Consumo médio diário equivalente&#10;Base 30 dias"><div class="mv-kpi-lbl">Equivalente diário</div><div class="mv-kpi-val">${c.dia.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg/dia</span></div><div class="mv-kpi-sub">base 30 dias</div></div>
+    <div class="mv-kpi ${cobCls}" data-tip="Quanto tempo o estoque atual duraria&#10;108.545 kg ÷ consumo médio"><div class="mv-kpi-lbl">Cobertura do estoque</div><div class="mv-kpi-val" style="color:${cobCol}">${String(c.cob).replace('.',',')}<span style="font-size:12px;color:var(--t3)"> meses</span></div><div class="mv-kpi-sub">108.545 kg em estoque</div></div>`;
+  document.getElementById('cons-formula').innerHTML=
+    `${c.soma.toLocaleString('pt-BR')} kg &nbsp;÷&nbsp; ${c.n} meses &nbsp;=&nbsp; <b>${c.media.toLocaleString('pt-BR')} kg/mês</b><br>`+
+    `108.545 kg em estoque &nbsp;÷&nbsp; ${c.media.toLocaleString('pt-BR')} kg/mês &nbsp;=&nbsp; <b>${String(c.cob).replace('.',',')} meses de cobertura</b>`;
+
+  destroy('consumo');
+  CH.consumo=new Chart(document.getElementById('ch-consumo'),{
+    data:{labels:CONSERIE.labels,datasets:[
+      {type:'bar',label:'Enviado no mês',data:CONSERIE.envios,
+       backgroundColor:CONSERIE.envios.map(v=>v===0?'#E2E8F0':'#5F5E5A'),borderRadius:4,order:3},
+      {type:'line',label:'Média móvel 3 meses',data:CONSERIE.mm3,borderColor:'#EF9F27',borderWidth:2,
+       pointRadius:3,pointBackgroundColor:'#EF9F27',tension:.3,fill:false,order:2},
+      {type:'line',label:'Média da janela ('+c.media.toLocaleString('pt-BR')+' kg)',data:new Array(12).fill(c.media),
+       borderColor:'#BA7517',borderWidth:2,borderDash:[6,3],pointRadius:0,fill:false,order:1}]},
+    options:{...C,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{font:{size:10},color:T2,boxWidth:10,padding:12}},
+        dl:{barsOnly:true,minW:22,fmt:fT},
+        tooltip:{callbacks:{label:x=>x.raw===0&&x.dataset.type==='bar'?'Sem remessa no mês':x.dataset.label+': '+Math.round(x.raw).toLocaleString('pt-BR')+' kg',
+          afterBody:it=>{const v=CONSERIE.envios[it[0].dataIndex];
+            return v===0?['—','Fábrica consumiu o lote do mês anterior']:[];}}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'t'},grid:{color:BD}},
+              x:{ticks:{color:T2,font:{size:9.5}},grid:{display:false}}}}});
+}
+function setCons(k,b){consSel=k;buildConsumo();}
+
+/* ═══════════ VENDAS ═══════════ */
+function buildVend(){
+  /* Chips de ano */
+  document.getElementById('vend-years').innerHTML=
+    `<button class="mv-chip ${vendAno==='all'?'on':''}" onclick="setVAno('all',this)">Todos os anos</button>`+
+    VANOS.map(y=>{
+      const tot=Object.values(VDATA[y]||{}).reduce((s,d)=>s+d.kg,0);
+      return `<button class="mv-chip ${vendAno===y?'on':''}" onclick="setVAno(${y},this)">${y}<span class="mv-chip-sub">${(tot/1000).toFixed(1)}t</span></button>`;
+    }).join('');
+
+  /* Chips de motivo — desabilita os que não existem no ano selecionado */
+  const dispo=vAgg(vendAno,'Todos').map(m=>m.nome);
+  if(vendMotivo!=='Todos'&&!dispo.includes(vendMotivo))vendMotivo='Todos';
+  document.getElementById('vend-chips').innerHTML=
+    `<button class="mv-chip ${vendMotivo==='Todos'?'on':''}" onclick="setVMot('Todos',this)">Todos</button>`+
+    VMOTS.map(m=>`<button class="mv-chip ${vendMotivo===m?'on':''}" ${dispo.includes(m)?'':'disabled'} onclick="setVMot('${m.replace(/'/g,"\\'")}',this)">${m}</button>`).join('');
+
+  const anoLbl=vendAno==='all'?'Todos os anos':String(vendAno);
+  document.getElementById('vend-sel').textContent=`${anoLbl} · ${vendMotivo}`;
+  document.getElementById('vend-badge').textContent=vendAno==='all'?vendMotivo:`${vendAno} · ${vendMotivo}`;
+
+  /* KPIs */
+  const sel=vAgg(vendAno,vendMotivo);
+  const k=sel.reduce((s,m)=>s+m.kg,0),v=sel.reduce((s,m)=>s+m.venda,0),c=sel.reduce((s,m)=>s+m.compra,0);
+  const n=sel.reduce((s,m)=>s+m.n,0);
+  const rec=c>0?v/c*100:0,perda=c-v;
+  const rc=rec>=90?'var(--green)':rec>=75?'var(--amber)':'var(--red)';
+  const rcl=rec>=90?'green':rec>=75?'amber':'red';
+  document.getElementById('vend-kpis').innerHTML=`
+    <div class="mv-kpi blue" data-tip="Volume de cacau bloqueado vendido&#10;no recorte selecionado"><div class="mv-kpi-lbl">Volume vendido</div><div class="mv-kpi-val">${k.toLocaleString('pt-BR')}<span style="font-size:12px;color:var(--t3)"> kg</span></div><div class="mv-kpi-sub">${n} ${n===1?'lote':'lotes'} · ${anoLbl}</div></div>
+    <div class="mv-kpi green" data-tip="Receita obtida com a revenda"><div class="mv-kpi-lbl">Valor recuperado</div><div class="mv-kpi-val">${brl(v)}</div><div class="mv-kpi-sub">receita das vendas</div></div>
+    <div class="mv-kpi" data-tip="Custo original de aquisição dos lotes"><div class="mv-kpi-lbl">Custo de compra</div><div class="mv-kpi-val">${brl(c)}</div><div class="mv-kpi-sub">valor pago na origem</div></div>
+    <div class="mv-kpi ${rcl}" data-tip="Venda ÷ Compra&#10;Quanto do custo foi recuperado"><div class="mv-kpi-lbl">Taxa de recuperação</div><div class="mv-kpi-val" style="color:${rc}">${rec.toFixed(1).replace('.',',')}%</div><div class="mv-kpi-sub">${perda>0?'perda de '+brl(perda):'ganho de '+brl(-perda)}</div></div>`;
+
+  /* Base para gráficos de motivo: todos os motivos do ano (destacando o filtrado) */
+  const base=vAgg(vendAno,'Todos').sort((a,b)=>b.kg-a.kg);
+  const tk=base.reduce((s,m)=>s+m.kg,0)||1;
+
+  destroy('vmot');
+  CH.vmot=new Chart(document.getElementById('ch-vmot'),{type:'bar',
+    data:{labels:base.map(m=>m.nome),datasets:[{data:base.map(m=>m.kg),backgroundColor:base.map(m=>vendMotivo==='Todos'||m.nome===vendMotivo?m.cor:'#E2E8F0'),borderRadius:4}]},
+    options:{...C,indexAxis:'y',plugins:{legend:{display:false},dl:{minW:0,pad:6,fmt:fT,color:'#1C1C1A'},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' kg'}}},
+      scales:{x:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(1)+'t'},grid:{color:BD}},y:{ticks:{color:T2,font:{size:9.5}},grid:{display:false}}}}});
+
+  destroy('vmix');
+  CH.vmix=new Chart(document.getElementById('ch-vmix'),{type:'doughnut',
+    data:{labels:base.map(m=>`${m.nome} (${(m.kg/tk*100).toFixed(1)}%)`),datasets:[{data:base.map(m=>m.kg),backgroundColor:base.map(m=>m.cor),borderWidth:2,borderColor:'#fff'}]},
+    options:{...C,plugins:{legend:{position:'bottom',labels:{font:{size:9},color:T2,padding:5,boxWidth:9}},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' kg'}}}}});
+
+  destroy('vrec');
+  CH.vrec=new Chart(document.getElementById('ch-vrec'),{type:'bar',
+    data:{labels:base.map(m=>m.nome),datasets:[
+      {label:'Compra',data:base.map(m=>m.compra),backgroundColor:'#5F5E5A',borderRadius:3},
+      {label:'Venda',data:base.map(m=>m.venda),backgroundColor:'#BA7517',borderRadius:3}]},
+    options:{...C,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.dataset.label+': '+brl(x.raw),
+      afterBody:it=>{if(it.length<2)return[];const cp=it[0].raw,vd=it[1].raw;return['—','Recuperação: '+(vd/cp*100).toFixed(0)+'%'];}}}},
+      scales:{x:{ticks:{color:T2,font:{size:9}},grid:{display:false}},y:{ticks:{color:T2,font:{size:10},callback:v=>'R$'+(v/1000).toFixed(0)+'k'},grid:{color:BD}}}}});
+
+  document.getElementById('vend-eff').innerHTML=base.map(m=>{
+    const r=m.venda/m.compra*100,col=r>=90?'#059669':r>=75?'#D97706':'#DC2626';
+    const dim=vendMotivo!=='Todos'&&m.nome!==vendMotivo;
+    return `<div class="efr" style="${dim?'opacity:.4':''}"><span class="efnm">${m.nome}</span>
+      <div class="efbg"><div class="efbf" style="width:${Math.min(r,100)}%;background:${col}"></div><div class="efmk" style="left:100%"></div></div>
+      <span class="efpct" style="color:${col}">${r.toFixed(0)}%</span>
+      <span class="efdl" style="color:${m.venda>=m.compra?'#059669':'#DC2626'}">${m.venda>=m.compra?'+':''}${brl(m.venda-m.compra)}</span></div>`;
+  }).join('');
+
+  /* Evolução anual — respeita o filtro de motivo, destaca o ano selecionado */
+  const serie=vSerieAnual(vendMotivo);
+  destroy('vano');
+  CH.vano=new Chart(document.getElementById('ch-vano'),{type:'bar',
+    data:{labels:serie.map(s=>String(s.ano)),datasets:[
+      {type:'bar',label:'Volume (kg)',data:serie.map(s=>s.kg),backgroundColor:serie.map(s=>vendAno==='all'||s.ano===vendAno?'#BA7517':'#E2E8F0'),borderRadius:4,yAxisID:'y',order:2},
+      {type:'line',label:'Valor (R$)',data:serie.map(s=>s.venda),borderColor:'#8A5510',borderWidth:2,pointRadius:4,tension:.3,yAxisID:'y2',order:1}]},
+    options:{...C,plugins:{legend:{labels:{font:{size:10},color:T2,boxWidth:10,padding:10}},
+      tooltip:{callbacks:{label:x=>x.dataset.yAxisID==='y2'?brl(x.raw):x.raw.toLocaleString('pt-BR')+' kg'}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:BD}},
+              y2:{position:'right',ticks:{color:'#8A5510',font:{size:10},callback:v=>'R$'+(v/1000).toFixed(0)+'k'},grid:{display:false}},
+              x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+
+  /* Compradores do recorte */
+  const emps=vendAno==='all'?VEMP.all:(VEMP[vendAno]||[]);
+  destroy('vemp');
+  CH.vemp=new Chart(document.getElementById('ch-vemp'),{type:'bar',
+    data:{labels:emps.map(e=>e.nome),datasets:[{data:emps.map(e=>e.kg),backgroundColor:['#BA7517','#EF9F27','#5F5E5A'],borderRadius:4}]},
+    options:{...C,indexAxis:'y',plugins:{legend:{display:false},dl:{minW:0,pad:6,fmt:fT,color:'#1C1C1A'},tooltip:{callbacks:{label:x=>{const e=emps[x.dataIndex];return[x.raw.toLocaleString('pt-BR')+' kg',brl(e.venda)];}}}},
+      scales:{x:{ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(1)+'t'},grid:{color:BD}},y:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+  document.getElementById('vemp-sub').textContent=vendAno==='all'?'Empresas que adquiriram o cacau recuperado':`Compradores em ${vendAno}`;
+
+  /* Insight dinâmico */
+  const ordR=[...base].filter(m=>m.compra>0).sort((a,b)=>(b.venda/b.compra)-(a.venda/a.compra));
+  const bestM=ordR[0],worstM=ordR[ordR.length-1];
+  const el=document.getElementById('vend-insight');
+  if(bestM&&worstM&&bestM.nome!==worstM.nome){
+    el.innerHTML=`<div class="at">Insight de recuperação — ${anoLbl}</div><div class="ad">O <strong>${bestM.nome}</strong> recupera ${(bestM.venda/bestM.compra*100).toFixed(0)}% do valor de compra${bestM.venda>=bestM.compra?' — vendido acima do custo de aquisição':''}. Já o <strong>${worstM.nome}</strong> recupera apenas ${(worstM.venda/worstM.compra*100).toFixed(0)}%, concentrando a maior perda (${brl(worstM.compra-worstM.venda)}). Reduzir esse tipo de bloqueio na origem tem o maior impacto no resultado.</div>`;
+  }else if(bestM){
+    el.innerHTML=`<div class="at">Recuperação — ${anoLbl}</div><div class="ad">Único motivo registrado no recorte: <strong>${bestM.nome}</strong>, com ${(bestM.venda/bestM.compra*100).toFixed(0)}% de recuperação sobre o custo de compra (${brl(bestM.compra-bestM.venda)} de ${bestM.venda>=bestM.compra?'ganho':'perda'}).</div>`;
+  }else{
+    el.innerHTML=`<div class="at">Sem registros</div><div class="ad">Não há vendas registradas para o recorte selecionado.</div>`;
+  }
+}
+function setVAno(a,b){vendAno=a;buildVend();}
+function setVMot(m,b){if(b&&b.disabled)return;vendMotivo=m;buildVend();}
+
+/* ═══════════ TCO ═══════════ */
+function buildTco(){
+  document.getElementById('tco-years').innerHTML=[2024,2025,2026].map(y=>
+    `<button class="mv-chip ${y===tcoYear?'on':''}" onclick="setTcoYear(${y},this)">${y}</button>`).join('');
+  const t=TCO[tcoYear];
+  document.getElementById('tco-st').textContent=`TCO — Custo Total do kg · ${tcoYear}`;
+  document.getElementById('tco-sel').textContent=tcoYear;
+  document.getElementById('tco-badge').textContent=t.ks;
+  const pc=v=>(v/t.total*100).toFixed(0)+'%';
+  document.getElementById('tco-kpis').innerHTML=`
+    <div class="fk"><div class="fkl">TCO total</div><div class="fkv" style="color:var(--green);font-size:19px">R$ ${t.total.toFixed(2).replace('.',',')}</div><div class="fks">por kg entregue</div></div>
+    <div class="fk"><div class="fkl">Preço de compra</div><div class="fkv">R$ ${t.compra.toFixed(2).replace('.',',')}</div><div class="fks">${pc(t.compra)} do TCO</div></div>
+    <div class="fk"><div class="fkl">Frete</div><div class="fkv">R$ ${t.frete.toFixed(2).replace('.',',')}</div><div class="fks">${pc(t.frete)} do TCO</div></div>
+    <div class="fk"><div class="fkl">Processamento</div><div class="fkv">R$ ${t.proc.toFixed(2).replace('.',',')}</div><div class="fks">${pc(t.proc)} do TCO</div></div>
+    <div class="fk"><div class="fkl">Custo do capital</div><div class="fkv" style="color:var(--amber)">R$ ${t.carry.toFixed(2).replace('.',',')}</div><div class="fks">${pc(t.carry)} do TCO</div></div>`;
+  const best=Object.keys(TCO).reduce((a,b)=>TCO[a].total<TCO[b].total?a:b);
+  const dif=t.total-TCO[best].total;
+  document.getElementById('tco-nota').innerHTML=tcoYear==best?
+    `<strong>Melhor TCO da série.</strong> O custo total de R$ ${t.total.toFixed(2).replace('.',',')}/kg é a referência de eficiência — combina preço de compra favorável, frete controlado e baixo custo de capital imobilizado.`:
+    `TCO de <strong>R$ ${t.total.toFixed(2).replace('.',',')}/kg</strong>, R$ ${dif.toFixed(2).replace('.',',')} acima do melhor ano da série (${best}: R$ ${TCO[best].total.toFixed(2).replace('.',',')}/kg). O componente de <strong>custo do capital</strong> (R$ ${t.carry.toFixed(2).replace('.',',')}/kg) responde por ${pc(t.carry)} do total — acelerar o giro de estoque é a alavanca mais direta de redução.`;
+
+  destroy('tco');
+  CH.tco=new Chart(document.getElementById('ch-tco'),{type:'bar',
+    data:{labels:['Compra','Frete','Processamento','Custo capital'],datasets:[{data:[t.compra,t.frete,t.proc,t.carry],backgroundColor:['#5F5E5A','#8A5510','#EF9F27','#FAC775'],borderRadius:5}]},
+    options:{...C,plugins:{legend:{display:false},dl:{minW:24,fmt:v=>'R$'+v.toFixed(2).replace('.',',')},tooltip:{callbacks:{label:x=>'R$ '+x.raw.toFixed(2).replace('.',',')+'/kg ('+(x.raw/t.total*100).toFixed(1)+'%)'}}},
+      scales:{y:{ticks:{color:T2,font:{size:10},callback:v=>'R$'+v},grid:{color:BD}},x:{ticks:{color:T2,font:{size:10}},grid:{display:false}}}}});
+  document.getElementById('tco-ct').textContent=`Composição do TCO — ${tcoYear}`;
+
+  const Ys=[2024,2025,2026];
+  destroy('tcocmp');
+  CH.tcocmp=new Chart(document.getElementById('ch-tcocmp'),{type:'bar',
+    data:{labels:Ys.map(y=>y===2026?'2026*':String(y)),datasets:[
+      {label:'Compra',data:Ys.map(y=>TCO[y].compra),backgroundColor:'#5F5E5A',stack:'s',borderRadius:3},
+      {label:'Frete',data:Ys.map(y=>TCO[y].frete),backgroundColor:'#8A5510',stack:'s'},
+      {label:'Process.',data:Ys.map(y=>TCO[y].proc),backgroundColor:'#EF9F27',stack:'s'},
+      {label:'Capital',data:Ys.map(y=>TCO[y].carry),backgroundColor:'#FAC775',stack:'s',borderRadius:3}]},
+    options:{...C,plugins:{legend:{labels:{font:{size:9.5},color:T2,boxWidth:9,padding:8}},
+      tooltip:{mode:'index',callbacks:{label:x=>x.dataset.label+': R$ '+x.raw.toFixed(2).replace('.',','),
+        footer:it=>'TCO total: R$ '+it.reduce((a,b)=>a+b.raw,0).toFixed(2).replace('.',',')}}},
+      scales:{x:{stacked:true,ticks:{color:T2,font:{size:11}},grid:{display:false}},
+              y:{stacked:true,ticks:{color:T2,font:{size:10},callback:v=>'R$'+v},grid:{color:BD}}}}});
+}
+function setTcoYear(y,b){tcoYear=y;buildTco();}
+
+/* ═══════════ PROJETOR ═══════════ */
+function buildProj(){
+  const S0=HUBS.all.kg;
+  const cons=+document.getElementById('p-cons').value,rep=+document.getElementById('p-rep').value,safe=+document.getElementById('p-safe').value;
+  document.getElementById('p-cons-v').textContent=cons.toLocaleString('pt-BR')+' kg';
+  document.getElementById('p-rep-v').textContent=rep.toLocaleString('pt-BR')+' kg';
+  document.getElementById('p-safe-v').textContent=safe.toLocaleString('pt-BR')+' kg';
+
+  const labels=[];for(let i=0;i<=12;i++){const m=(7+i)%12,y=2026+Math.floor((7+i)/12);labels.push(MES[m]+'/'+String(y).slice(2));}
+  function sim(c,r){const s=[S0];let rm=null;for(let i=1;i<=12;i++){const n=Math.max(0,s[i-1]-c+r);s.push(n);if(s[i-1]>safe&&n<=safe&&rm===null)rm=i;}return{s,rm};}
+  const {s,rm}=sim(cons,rep);
+  const box=document.getElementById('rupt-box');
+  document.getElementById('rupt-fin').textContent=kg(s[12]);
+  if(rm!==null){
+    const mi=(7+rm-1)%12,yy=2026+Math.floor((7+rm-1)/12);
+    box.className='rupt r';
+    document.getElementById('rupt-st').textContent='⚠ Ruptura projetada';
+    document.getElementById('rupt-dt').textContent=MES[mi]+'/'+yy;
+    document.getElementById('rupt-ds').textContent=`Em ${rm} ${rm===1?'mês':'meses'} · consumo ${cons.toLocaleString('pt-BR')} kg/mês vs reposição ${rep.toLocaleString('pt-BR')} kg/mês`;
+    document.getElementById('proj-badge').textContent=`ruptura em ${rm} meses`;document.getElementById('proj-badge').className='badge br';
+  }else if(s[12]<safe*1.4){
+    box.className='rupt a';
+    document.getElementById('rupt-st').textContent='⚠ Margem apertada';
+    document.getElementById('rupt-dt').textContent=kg(s[12]);
+    document.getElementById('rupt-ds').textContent='Saldo final próximo do mínimo de segurança — monitorar reposição.';
+    document.getElementById('proj-badge').textContent='margem apertada';document.getElementById('proj-badge').className='badge ba';
+  }else{
+    box.className='rupt g';
+    document.getElementById('rupt-st').textContent='✓ Sem ruptura em 12 meses';
+    document.getElementById('rupt-dt').textContent=kg(s[12]);
+    document.getElementById('rupt-ds').textContent='Saldo confortável ao final do horizonte com os parâmetros atuais.';
+    document.getElementById('proj-badge').textContent='sem ruptura';document.getElementById('proj-badge').className='badge bgr';
+  }
+
+  document.getElementById('sens-grid').innerHTML=[0,10,20,30].map(p=>{
+    const r=sim(Math.round(cons*(1+p/100)),rep).rm;
+    const txt=r===null?'Sem ruptura':r+(r===1?' mês':' meses');
+    const col=r===null?'var(--green)':r<=4?'var(--red)':r<=8?'var(--amber)':'var(--green)';
+    const cls=r===null?'blgr':r<=4?'blr':r<=8?'bla':'blgr';
+    return `<div class="card ${cls}"><div class="cl">${p===0?'Consumo atual':'+ '+p+'% demanda'}</div><div class="cv" style="color:${col};font-size:19px">${txt}</div><div class="cd">${p===0?'cenário base':'até a ruptura'} · ${Math.round(cons*(1+p/100)).toLocaleString('pt-BR')} kg/mês</div></div>`;
+  }).join('');
+
+  destroy('proj');
+  CH.proj=new Chart(document.getElementById('ch-proj'),{type:'line',
+    data:{labels,datasets:[
+      {label:'Estoque projetado',data:s,borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,.08)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:s.map(v=>v<=safe?'#DC2626':'#BA7517'),tension:.3,fill:true},
+      {label:'Mínimo de segurança',data:new Array(13).fill(safe),borderColor:'#DC2626',borderWidth:1.5,borderDash:[6,3],pointRadius:0}]},
+    options:{...C,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' kg',
+      afterBody:it=>{const v=it[0]?.raw;return v!==undefined&&v<=safe?['⚠ Abaixo do mínimo de segurança']:[];}}}},
+      scales:{y:{min:0,ticks:{color:T2,font:{size:10},callback:v=>(v/1000).toFixed(0)+'k'},grid:{color:BD}},x:{ticks:{color:T2,font:{size:9},maxRotation:45},grid:{display:false}}}}});
+}
+
+/* ═══════════ INIT ═══════════ */
+buildHero();buildCurva();buildSaude();buildVgHub();buildFefo();buildProds();
+
+/* Animação das barras ao entrar na viewport */
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
+  const w=e.target.dataset.w;if(w){e.target.style.width=w;}obs.unobserve(e.target);}});},{threshold:.15});
+setTimeout(()=>{document.querySelectorAll('.trs-fill,.efbf,.t5bf,.pf,.fmbf').forEach(el=>{
+  const w=el.style.width;if(w&&w!=='0%'){el.dataset.w=w;el.style.width='0%';obs.observe(el);}});},60);
+</script>
+</body>
+</html>
