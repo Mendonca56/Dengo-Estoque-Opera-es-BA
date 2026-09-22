@@ -1144,7 +1144,7 @@ input[type=range]{flex:1;accent-color:#BA7517;cursor:pointer}
 <div id="pres">
   <div class="pr-top">
     <div class="pr-brand"><div class="pr-ico"><i class="ti ti-leaf" style="color:#FEF3C7"></i></div>
-      <div><div class="pr-bn">Dengo · CD Armazém Bahia</div><div class="pr-bs">Apresentação Executiva · Agosto 2026</div></div></div>
+      <div><div class="pr-bn">Dengo · CD Armazém Bahia</div><div class="pr-bs" id="pr-periodo">Apresentação Executiva</div></div></div>
     <div class="pr-nav" id="pr-nav"></div>
     <button class="pr-x" onclick="presClose()" title="Fechar (Esc)"><i class="ti ti-x"></i></button>
   </div>
@@ -1153,44 +1153,31 @@ input[type=range]{flex:1;accent-color:#BA7517;cursor:pointer}
     <!-- S1 — POSIÇÃO -->
     <div class="pr-slide on" id="prs-0">
       <div class="pr-h">Posição do Estoque</div>
-      <div class="pr-sub">Snapshot em 12 de agosto de 2026 · CD Armazém Bahia</div>
-      <div class="pr-kg">
-        <div class="pr-k"><div class="pr-kl">Valor imobilizado</div><div class="pr-kv" style="color:#EF9F27">R$ 3,82 <span>Mi</span></div><div class="pr-ks">217 lotes · R$ 35,51/kg médio</div></div>
-        <div class="pr-k"><div class="pr-kl">Volume total</div><div class="pr-kv">108.545 <span>kg</span></div><div class="pr-ks">108,5 toneladas de cacau</div></div>
-        <div class="pr-k"><div class="pr-kl">Ainda nos hubs</div><div class="pr-kv" style="color:#EF9F27">17.046 <span>kg</span></div><div class="pr-ks">33 lotes · 15,7% não chegou</div></div>
-        <div class="pr-k"><div class="pr-kl">Idade média</div><div class="pr-kv">158 <span>dias</span></div><div class="pr-ks">ponderada por volume</div></div>
-      </div>
+      <div class="pr-sub" id="p1-sub">—</div>
+      <div class="pr-kg" id="p1-kpis"></div>
       <div class="pr-g2">
         <div class="pr-cw"><div class="pr-ct">Situação do estoque</div><div class="pr-cs">Armazenado · em separação · em trânsito</div><div class="pr-ch sm"><canvas id="pch-pos"></canvas></div></div>
-        <div class="pr-cw"><div class="pr-ct">Onde o cacau está</div><div class="pr-cs">Localização física — 84,3% já em Ilhéus</div><div class="pr-ch sm"><canvas id="pch-hub"></canvas></div></div>
+        <div class="pr-cw"><div class="pr-ct">Onde o cacau está</div><div class="pr-cs" id="p1-hubsub">—</div><div class="pr-ch sm"><canvas id="pch-hub"></canvas></div></div>
       </div>
-      <div class="pr-msg"><i class="ti ti-bulb"></i><div><div class="pr-mt">Leitura executiva</div>
-        <div class="pr-md">O estoque soma <strong>R$ 3,82 milhões</strong> em 108,5 toneladas. <strong>84,3% já está fisicamente no depósito de Ilhéus</strong> (91.499 kg), sendo 16.528 kg em separação para abastecer a fábrica. Os 17.046 kg restantes ainda estão nos hubs de Apuarema e Travessão aguardando transferência — com idade média de apenas 27 dias, contra 182 dias do estoque de Ilhéus.</div></div></div>
+      <div class="pr-msg"><i class="ti ti-bulb"></i><div><div class="pr-mt">Leitura executiva</div><div class="pr-md" id="p1-msg"></div></div></div>
     </div>
 
     <!-- S2 — SAUDABILIDADE -->
     <div class="pr-slide" id="prs-1">
       <div class="pr-h">Saudabilidade do Estoque</div>
-      <div class="pr-sub">Distribuição por faixa de vencimento · nenhum lote vencido</div>
-      <div class="pr-kg">
-        <div class="pr-k"><div class="pr-kl">Lotes vencidos</div><div class="pr-kv" style="color:#34D399">0</div><div class="pr-ks">base 100% saudável</div></div>
-        <div class="pr-k"><div class="pr-kl">Menor prazo</div><div class="pr-kv">100 <span>dias</span></div><div class="pr-ks">vence em 20/11/2026</div></div>
-        <div class="pr-k"><div class="pr-kl">A vencer em 150d</div><div class="pr-kv" style="color:#EF9F27">10.218 <span>kg</span></div><div class="pr-ks">R$ 534 mil · 9,4% do valor</div></div>
-        <div class="pr-k"><div class="pr-kl">Folga acima de 300d</div><div class="pr-kv" style="color:#34D399">42.198 <span>kg</span></div><div class="pr-ks">R$ 1,33 Mi · 34,8% do valor</div></div>
-      </div>
+      <div class="pr-sub" id="p2-sub">—</div>
+      <div class="pr-kg" id="p2-kpis"></div>
       <div class="pr-cw"><div class="pr-ct">Faixas de vencimento — valor e Pareto acumulado</div><div class="pr-cs">Barras = R$ em estoque · linha = % acumulado</div><div class="pr-ch"><canvas id="pch-venc"></canvas></div></div>
-      <div class="pr-msg"><i class="ti ti-shield-check"></i><div><div class="pr-mt">Situação confortável</div>
-        <div class="pr-md">Não há lotes vencidos e <strong>nenhum lote na janela crítica de 0 a 90 dias</strong>. A prioridade FEFO recai sobre os <strong>4.167 kg</strong> (R$ 161 mil) que vencem entre 90 e 120 dias — volume plenamente absorvível pelo consumo mensal médio de 15,7 toneladas.</div></div></div>
+      <div class="pr-msg"><i class="ti ti-shield-check"></i><div><div class="pr-mt" id="p2-mt">—</div><div class="pr-md" id="p2-msg"></div></div></div>
     </div>
 
-    <!-- S3 — CURVA -->
+    <!-- S3 — VENCIMENTOS -->
     <div class="pr-slide" id="prs-2">
       <div class="pr-h">Cronograma de Vencimentos</div>
       <div class="pr-sub">Quanto vence a cada mês e se o consumo da fábrica absorve</div>
       <div class="pr-cw"><div class="pr-ct">Vencimentos por mês</div><div class="pr-cs">Barras = vence no mês · linha = saldo de estoque sem reposição</div><div class="pr-ch"><canvas id="pch-curva"></canvas></div></div>
       <div class="pr-cw"><div class="pr-ct">Valor a vencer por mês</div><div class="pr-cs">Exposição financeira em R$</div><div class="pr-ch sm"><canvas id="pch-preco"></canvas></div></div>
-      <div class="pr-msg"><i class="ti ti-calendar-check"></i><div><div class="pr-mt">Sem risco de perda por validade</div>
-        <div class="pr-md">O teste é conservador: <strong>supõe que nenhuma compra nova entre</strong>. Mesmo assim, o estoque atual dura <strong>6,9 meses</strong> no ritmo de consumo da fábrica (15.697 kg/mês) e se esgota em março de 2027. Todos os lotes com validade a partir daí — inclusive o pico de jul/27 — terão sido consumidos antes de vencer. Nos meses em que ainda há saldo, o volume que vence é sempre menor que o estoque disponível.</div></div></div>
+      <div class="pr-msg"><i class="ti ti-calendar-check"></i><div><div class="pr-mt" id="p3-mt">—</div><div class="pr-md" id="p3-msg"></div></div></div>
     </div>
 
     <!-- S4 — RISCOS -->
@@ -1198,16 +1185,15 @@ input[type=range]{flex:1;accent-color:#BA7517;cursor:pointer}
       <div class="pr-h">Concentração e Prioridades</div>
       <div class="pr-sub">Dependência de fornecedores e fila de consumo FEFO</div>
       <div class="pr-g2">
-        <div class="pr-cw"><div class="pr-ct">Concentração de fornecedores</div><div class="pr-cs">Top 8 de 65 produtores · % do volume em estoque</div><div id="pr-prods"></div></div>
+        <div class="pr-cw"><div class="pr-ct">Concentração de fornecedores</div><div class="pr-cs" id="p4-prodsub">—</div><div id="pr-prods"></div></div>
         <div class="pr-cw"><div class="pr-ct">Fila FEFO — consumir primeiro</div><div class="pr-cs">Lotes com vencimento mais próximo</div><div id="pr-fefo"></div></div>
       </div>
-      <div class="pr-msg"><i class="ti ti-alert-triangle"></i><div><div class="pr-mt">Ponto de atenção</div>
-        <div class="pr-md">Os <strong>3 maiores produtores concentram 38,9%</strong> do estoque (Luiz Sérgio 15,0%, Agrícola Conduru 13,8%, Luiz Carlos 10,0%). Essa concentração cria dependência de fornecimento — vale avaliar diversificação da base em 2027 para reduzir risco de ruptura por perda de um único fornecedor.</div></div></div>
+      <div class="pr-msg"><i class="ti ti-alert-triangle"></i><div><div class="pr-mt">Ponto de atenção</div><div class="pr-md" id="p4-msg"></div></div></div>
     </div>
   </div>
 
   <div class="pr-foot">
-    <span>Dengo Chocolates · Logística BI · dados de 22/09/2026</span>
+    <span id="pr-rodape">Dengo Chocolates · Logística BI</span>
     <div class="pr-dots" id="pr-dots"></div>
     <span>← → para navegar · Esc para sair</span>
   </div>
@@ -1301,7 +1287,7 @@ const fN=v=>Math.round(v).toLocaleString('pt-BR');
 const fP=v=>v.toFixed(0)+'%';
 
 /*<<<DADOS_INICIO>>>*/
-/* ══ GERADO AUTOMATICAMENTE — 22/09/2026 13:06 ══
+/* ══ GERADO AUTOMATICAMENTE — 22/09/2026 13:33 ══
    Origem: Inventário_DengoBA_-_Copia_-_Atualizado_-_Copia.xlsx */
 const AB={2024: {massa: [18610, 18259, 19793, 19230, 18592, 18268, 26837, 19104, 29784, 28759, 20064, 38579], pepita: [1496, 1181, 0, 476, 806, 1200, 1955, 1563, 1650, 1590, 0, 1638], amazonia: [0, 418, 0, 0, 400, 400, 1553, 0, 0, 0, 0, 0]}, 2025: {massa: [0, 20000, 0, 0, 16013, 20061, 19943, 18384, 19988, 18366, 0, 20084], pepita: [0, 0, 0, 0, 4000, 0, 0, 0, 0, 1600, 0, 0], amazonia: [0, 0, 0, 0, 0, 0, 0, 1600, 0, 0, 0, 0]}, 2026: {massa: [18427, 36855, 0, 19636, 10970, 0, 19326, 17846, 0, 0, 0, 0], pepita: [0, 3065, 0, 0, 0, 0, 0, 1615, 0, 0, 0, 0], amazonia: [1600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}};
 const HIST=[151070, 142936, 195448, 292204, 160039, 129340];
@@ -1701,6 +1687,82 @@ function buildVgHub(){
               y:{ticks:{color:T2,font:{size:11}},grid:{display:false}}}}});
 }
 
+/* ═══════════ TEXTOS DA APRESENTAÇÃO — derivados dos dados ═══════════ */
+function buildPresTextos(){
+  const MX=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const d=new Date(DATA_GERACAO+'T12:00:00');
+  const nk=v=>Math.round(v).toLocaleString('pt-BR');
+  const pc=v=>v.toFixed(1).replace('.',',');
+  const mi=v=>(v/1e6).toFixed(2).replace('.',',');
+  const set=(id,h)=>{const e=document.getElementById(id); if(e)e.innerHTML=h;};
+  const T=LOCAIS.all, tot=T.kg||1, P=POSICOES;
+  const IL=LOCAIS['ILHÉUS']||{kg:0,idade:0};
+  const tr=P[2]||{kg:0,lotes:0,idade:0}, sep=P[1]||{kg:0,lotes:0};
+  const rotas=LOCKEYS.filter(k=>LOCAIS[k].trans>0).map(k=>LOCAIS[k].nome.replace('Em rota · ',''));
+  const lista=a=>a.length<=1?(a[0]||''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
+
+  set('pr-periodo','Apresentação Executiva · '+MX[d.getMonth()].charAt(0).toUpperCase()+MX[d.getMonth()].slice(1)+' '+d.getFullYear());
+  set('pr-rodape','Dengo Chocolates · Logística BI · dados de '+fmtData(d));
+
+  /* ── slide 1 ── */
+  set('p1-sub','Snapshot em '+d.getDate()+' de '+MX[d.getMonth()]+' de '+d.getFullYear()+' · CD Armazém Bahia');
+  set('p1-kpis',`
+    <div class="pr-k"><div class="pr-kl">Valor imobilizado</div><div class="pr-kv" style="color:#EF9F27">R$ ${mi(T.valor)} <span>Mi</span></div><div class="pr-ks">${T.lotes} lotes · R$ ${T.preco.toFixed(2).replace('.',',')}/kg médio</div></div>
+    <div class="pr-k"><div class="pr-kl">Volume total</div><div class="pr-kv">${nk(T.kg)} <span>kg</span></div><div class="pr-ks">${pc(T.kg/1000)} toneladas de cacau</div></div>
+    <div class="pr-k"><div class="pr-kl">Ainda nos hubs</div><div class="pr-kv" style="color:#EF9F27">${nk(tr.kg)} <span>kg</span></div><div class="pr-ks">${tr.lotes} lotes · ${pc(tr.kg/tot*100)}% não chegou</div></div>
+    <div class="pr-k"><div class="pr-kl">Idade média</div><div class="pr-kv">${T.idade} <span>dias</span></div><div class="pr-ks">ponderada por volume</div></div>`);
+  set('p1-hubsub','Localização física — '+pc(IL.kg/tot*100)+'% já em Ilhéus');
+  set('p1-msg',`O estoque soma <strong>R$ ${mi(T.valor)} milhões</strong> em ${pc(T.kg/1000)} toneladas. `+
+    `<strong>${pc(IL.kg/tot*100)}% já está fisicamente no depósito de Ilhéus</strong> (${nk(IL.kg)} kg), sendo ${nk(sep.kg)} kg em separação para abastecer a fábrica. `+
+    (tr.kg>0?`Os ${nk(tr.kg)} kg restantes ainda estão ${rotas.length>1?'nos hubs de':'no hub de'} ${lista(rotas)} aguardando transferência — com idade média de ${tr.idade} dias, contra ${IL.idade} dias do estoque de Ilhéus.`
+            :'Não há carga em trânsito: todo o estoque já está em Ilhéus.'));
+
+  /* ── slide 2 ── */
+  const ix=l=>VENC.labels.indexOf(l);
+  const soma=(arr,a,b)=>arr.slice(a,b).reduce((x,y)=>x+y,0);
+  const venc=VENC.n[0]||0;
+  const c150=ix('150-180')>0?ix('150-180'):8, c300=ix('300-365')>0?ix('300-365'):11, c90=ix('90-120')>0?ix('90-120'):6;
+  const totV=VENC.vl.reduce((a,b)=>a+b,0)||1;
+  const k150=soma(VENC.kg,0,c150), v150=soma(VENC.vl,0,c150);
+  const kF=soma(VENC.kg,c300), vF=soma(VENC.vl,c300);
+  const k90=soma(VENC.kg,1,c90), n90=soma(VENC.n,1,c90);
+  const k120=VENC.kg[c90]||0, v120=VENC.vl[c90]||0;
+  const f0=FEFO[0]||{d:0,v:'—'};
+  set('p2-sub','Distribuição por faixa de vencimento · '+(venc?venc+(venc===1?' lote vencido':' lotes vencidos'):'nenhum lote vencido'));
+  set('p2-kpis',`
+    <div class="pr-k"><div class="pr-kl">Lotes vencidos</div><div class="pr-kv" style="color:${venc?'#F87171':'#34D399'}">${venc}</div><div class="pr-ks">${venc?'exigem destinação':'base 100% saudável'}</div></div>
+    <div class="pr-k"><div class="pr-kl">Menor prazo</div><div class="pr-kv">${f0.d} <span>dias</span></div><div class="pr-ks">vence em ${f0.v}</div></div>
+    <div class="pr-k"><div class="pr-kl">A vencer em 150d</div><div class="pr-kv" style="color:#EF9F27">${nk(k150)} <span>kg</span></div><div class="pr-ks">${brl(v150)} · ${pc(k150/tot*100)}% do estoque</div></div>
+    <div class="pr-k"><div class="pr-kl">Folga acima de 300d</div><div class="pr-kv" style="color:#34D399">${nk(kF)} <span>kg</span></div><div class="pr-ks">R$ ${mi(vF)} Mi · ${pc(kF/tot*100)}% do estoque</div></div>`);
+  if(venc){
+    set('p2-mt','Ação necessária');
+    set('p2-msg',`Há <strong>${venc} ${venc===1?'lote vencido':'lotes vencidos'}</strong> (${nk(VENC.kg[0])} kg) que precisam de destinação. Na sequência, a prioridade FEFO recai sobre os lotes com menor prazo de validade.`);
+  }else if(k90>0){
+    set('p2-mt','Atenção à janela de 90 dias');
+    set('p2-msg',`Não há lotes vencidos, mas <strong>${nk(k90)} kg em ${n90} ${n90===1?'lote':'lotes'}</strong> já estão na janela de até 90 dias — o mais próximo vence em ${f0.v}, com ${f0.d} dias de prazo. Esses lotes devem ter prioridade nas próximas separações para a fábrica (consumo médio de ${nk(CONSUMO_MES)} kg/mês).`);
+  }else{
+    set('p2-mt','Situação confortável');
+    set('p2-msg',`Não há lotes vencidos e <strong>nenhum lote na janela crítica de 0 a 90 dias</strong>. A prioridade FEFO recai sobre os <strong>${nk(k120)} kg</strong> (${brl(v120)}) que vencem entre 90 e 120 dias — volume absorvível pelo consumo médio de ${nk(CONSUMO_MES)} kg/mês.`);
+  }
+
+  /* ── slide 3 ── */
+  const iPico=VENCMES.kg.indexOf(Math.max(...VENCMES.kg));
+  set('p3-mt','Sem risco de perda por validade');
+  set('p3-msg',`O teste é conservador: <strong>supõe que nenhuma compra nova entre</strong>. Mesmo assim, o estoque atual dura <strong>${String(MESES_COBERTURA).replace('.',',')} meses</strong> no ritmo de consumo da fábrica (${nk(CONSUMO_MES)} kg/mês) e se esgota em ${MES_ESGOTA}. `+
+    `O maior volume a vencer está em <strong>${VENCMES.labels[iPico]}</strong> (${nk(VENCMES.kg[iPico])} kg)`+
+    ((()=>{const aperto=VENCMES.labels.filter((l,i)=>VENCMES.saldo[i]>0&&VENCMES.saldo[i]<VENCMES.kg[i]);
+      return aperto.length
+        ?`. Em <strong>${aperto.join(', ')}</strong> o saldo projetado fica abaixo do volume que vence no mês — o consumo FEFO retira esses lotes antes da data, mas é o ponto mais justo da curva.`
+        :`. Nos meses em que ainda há saldo, o volume que vence fica abaixo do estoque disponível.`;})()));
+
+  /* ── slide 4 ── */
+  const top3=PRODS.slice(0,3), p3=top3.reduce((a,p)=>a+p.pct,0);
+  const nome=p=>p.p.split(' ').slice(0,2).join(' ');
+  set('p4-prodsub',`Top ${PRODS.length} de ${N_PRODS} produtores · % do volume em estoque`);
+  set('p4-msg',`Os <strong>3 maiores produtores concentram ${pc(p3)}%</strong> do estoque (${top3.map(p=>nome(p)+' '+pc(p.pct)+'%').join(', ')}). `+
+    `Essa concentração cria dependência de fornecimento — vale avaliar a diversificação da base para reduzir o risco de ruptura pela perda de um único fornecedor.`);
+}
+
 /* ═══════════ MODO APRESENTAÇÃO ═══════════ */
 const PRS=['Posição','Saudabilidade','Vencimentos','Riscos'];
 let prIdx=0,prBuilt=false;
@@ -1708,6 +1770,7 @@ function presOpen(){
   document.getElementById('pres').classList.add('on');
   document.getElementById('pr-nav').innerHTML=PRS.map((t,i)=>`<button class="pr-nb ${i===0?'on':''}" onclick="presGo(${i})">${i+1}. ${t}</button>`).join('');
   document.getElementById('pr-dots').innerHTML=PRS.map((_,i)=>`<div class="pr-dot ${i===0?'on':''}" onclick="presGo(${i})"></div>`).join('');
+  buildPresTextos();
   if(!prBuilt){prBuilt=true;setTimeout(buildPres,90);}
   presGo(0);
 }
